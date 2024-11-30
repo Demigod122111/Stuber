@@ -10,7 +10,6 @@ export default function Home() {
         <h1>Go anywhere with Stuber</h1>
         <input type="text" placeholder="Enter location" className="location-input"></input>
         <input type="text" placeholder="Enter destination" className="destination-input"></input>
-        <div>words</div>
       </div>
     </div>
   )
