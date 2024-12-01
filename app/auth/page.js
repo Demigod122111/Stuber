@@ -109,7 +109,7 @@ export default function Auth()
                 onClick={() => {
                     setIsLogin(true);
                     setResetPwdMode(false);
-                    setResetCode('');
+                    setResetCode(''); 
                 }}
               >
                 Login
