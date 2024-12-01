@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import "./styles.css"
 import { EnsureLogin } from '../auth/page';
-import Logo from "../assets/stuber_logo.png";
+import Logo from "../assets/images/stuber_logo.png";
 
 
 export default function Home() {
