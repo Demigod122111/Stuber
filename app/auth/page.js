@@ -128,7 +128,7 @@ export default function Auth()
               <form onSubmit={(e) => {
                 e.preventDefault();
 
-                if (resetCode != expectedResetCode)
+                if (resetPwdMode && resetCode != expectedResetCode)
                 {
                     setMsg("Invalid Reset Code!");
                     return;
