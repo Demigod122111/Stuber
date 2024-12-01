@@ -57,12 +57,12 @@
   font-weight: 600;
 }
 
-.logo {
+.find-ride-menu-logo {
   margin-bottom: 15px;
 }
 
-.icon {
-  height: 80px;
+.nav-bar-logo {
+  height: 60px;
 }
 
 nav {
@@ -71,4 +71,9 @@ nav {
   left: 0;
   right: 0;
   height: 80px;
+  padding: 10px 10px 10px 20px;
+}
+
+.nav-bar-logo-link {
+  display: inline-block;
 }
