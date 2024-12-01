@@ -19,6 +19,11 @@ export const IsLoggedIn = async () => {
     return true;
 }
 
+export const EnsureLogin = async () => {
+  if (!(await IsLoggedIn()))
+    redirect("/auth");
+}
+
 export const GetCurrentUser = () => sessionStorage.getItem("cuser");
 
 const CreateAccount = async (name, email, password, phonenumber, uid, setMsg, setIsLogin) => {
@@ -44,13 +49,13 @@ const Login = async (email, password, resetPwdMode, setMsg) => {
             await sql`UPDATE users SET password=${npwd} WHERE uid=${res[0]["uid"]} AND id=${res[0]["id"]}`;
         }
 
-        const pwd = await decryptPassword(res[0]["uid"], res[0]["password"]);
+        const pwd = resetPwdMode ? password : await decryptPassword(res[0]["uid"], res[0]["password"]);
 
         if (password == pwd)
         {
-            setMsg("Logging In...");
+            setMsg(resetPwdMode ? "Password Changed! Logging In..." : "Logging In...");
             const sessionUID = uuidv4();
-            await sql`INSERT INTO users (currentsession) VALUES (${sessionUID})`;
+            await sql`UPDATE users SET currentsession=${sessionUID} WHERE id=${res[0]["id"]} AND uid=${res[0]["uid"]}`;
             sessionStorage.setItem("cuser", res[0]["id"]);
             sessionStorage.setItem("csession", sessionUID);
             redirect("/home");
@@ -109,7 +114,7 @@ export default function Auth()
                 onClick={() => {
                     setIsLogin(true);
                     setResetPwdMode(false);
-                    setResetCode('');
+                    setResetCode(''); 
                 }}
               >
                 Login
@@ -128,7 +133,7 @@ export default function Auth()
               <form onSubmit={(e) => {
                 e.preventDefault();
 
-                if (resetCode != expectedResetCode)
+                if (resetPwdMode && resetCode != expectedResetCode)
                 {
                     setMsg("Invalid Reset Code!");
                     return;

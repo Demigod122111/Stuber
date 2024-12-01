@@ -1,9 +1,15 @@
 "use client"
 
-import React, { useState } from 'react'
+import { useEffect } from 'react'
 import "./styles.css"
+import { EnsureLogin } from '../auth/page';
+
 
 export default function Home() {
+  useEffect(() => {
+    EnsureLogin();
+  })
+
   return (
     <div className="container">
       <link rel="icon" type="image/x-icon" href="/icon.png"></link>
