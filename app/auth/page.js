@@ -49,7 +49,7 @@ const Login = async (email, password, resetPwdMode, setMsg) => {
             await sql`UPDATE users SET password=${npwd} WHERE uid=${res[0]["uid"]} AND id=${res[0]["id"]}`;
         }
 
-        const pwd = await decryptPassword(res[0]["uid"], res[0]["password"]);
+        const pwd = resetPwdMode ? password : await decryptPassword(res[0]["uid"], res[0]["password"]);
 
         if (password == pwd)
         {
