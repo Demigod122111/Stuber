@@ -10,12 +10,16 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
+    "@react-email/components": "^0.0.28",
+    "@react-email/render": "^1.0.2",
     "dotenv": "^16.4.5",
     "knex": "^3.1.0",
     "mysql2": "^3.11.5",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106"
+    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-email": "^3.0.2",
+    "resend": "^4.0.1"
   },
   "devDependencies": {
     "eslint": "^8",
