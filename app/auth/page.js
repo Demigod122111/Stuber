@@ -19,6 +19,11 @@ export const IsLoggedIn = async () => {
     return true;
 }
 
+export const EnsureLogin = async () => {
+  if (!(await IsLoggedIn()))
+    redirect("/auth");
+}
+
 export const GetCurrentUser = () => sessionStorage.getItem("cuser");
 
 const CreateAccount = async (name, email, password, phonenumber, uid, setMsg, setIsLogin) => {
