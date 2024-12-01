@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import "./styles.css"
 import { EnsureLogin } from '../auth/page';
+import Logo from "../assets/stuber_logo.png";
 
 
 export default function Home() {
@@ -12,13 +13,12 @@ export default function Home() {
 
   return (
     <div className="container">
-      <link rel="icon" type="image/x-icon" href="/icon.png"></link>
       <nav>
-        <a href="/home" className="nav-bar-logo-link"><img src="/logo.png" className="nav-bar-logo"></img></a>
+        <a href="/home" className="nav-bar-logo-link"><img src={Logo} className="nav-bar-logo"></img></a>
       </nav>
       <div className="find-ride-menu">
         <h1>Get home safely with</h1>
-        <img src="/logo.png" className="find-ride-menu-logo" alt="logo"></img>
+        <img src={Logo} className="find-ride-menu-logo" alt="logo"></img>
         <p>Find a driver, hop in, and go straight home.</p>
         <input type="text" placeholder="Enter location" className="location-input"></input>
         <input type="text" placeholder="Enter destination" className="destination-input"></input>
