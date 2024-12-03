@@ -56,6 +56,7 @@ const CreateAccount = async (name, email, password, phonenumber, uid, setMsg, se
         else
         {
           setMsg(`Unable to send link to ${email} to activate your account! Please contact administrator at info.stuber.rash@gmail.com\nError: ${JSON.stringify(rpy.error)}`);
+          await sql`DELETE FROM users WHERE email=${email}`;
         }
         setIsLogin(true);
     }
