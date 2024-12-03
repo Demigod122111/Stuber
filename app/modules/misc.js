@@ -1,5 +1,7 @@
 "use client"
 
+import { sql } from "./database";
+
 export function generateSixDigitCode() 
 {
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -34,4 +36,30 @@ export function getHostDomain(url) {
 
     // Otherwise, just return the host domain (without port)
     return hostDomain;
+}
+
+export const GetUserData = (setUserData, setters) => {
+    const getUserData = async (id, session) => {
+        const data = await sql`SELECT name, email FROM users WHERE id=${id} AND currentsession=${session}`;
+        if (data.length > 0)
+        setUserData(data[0]);
+
+        if (setters != undefined)
+        {
+            Object.keys(setters).forEach((key) => {
+                setters[key](data[0][key]);
+            });
+        }
+    }
+
+    return getUserData(localStorage.getItem("cuser"), localStorage.getItem("csession"));
+}
+
+export const UpdateUserData = (field, data) => {
+    const updateUserData = async (id, session) => {
+        const query = `UPDATE users SET ${field} = $1 WHERE id = $2 AND currentsession = $3`;
+        await sql(query, [data, id, session]);
+    }
+
+    return updateUserData(localStorage.getItem("cuser"), localStorage.getItem("csession"));
 }

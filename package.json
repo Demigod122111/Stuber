@@ -13,13 +13,19 @@
     "@react-email/components": "^0.0.28",
     "@react-email/render": "^1.0.2",
     "dotenv": "^16.4.5",
+    "js-cookie": "^3.0.5",
     "knex": "^3.1.0",
     "mysql2": "^3.11.5",
+    "net": "^1.0.2",
     "next": "15.0.3",
+    "pusher-js": "^8.4.0-rc2",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-email": "^3.0.2",
-    "resend": "^4.0.1"
+    "resend": "^4.0.1",
+    "tls": "^0.0.1",
+    "uuid": "^11.0.3",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "eslint": "^8",

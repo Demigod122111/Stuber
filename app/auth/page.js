@@ -28,6 +28,12 @@ export const EnsureLogin = async () => {
     redirect("/auth");
 }
 
+export const Logout = () => {
+  localStorage.removeItem("cuser");
+  localStorage.removeItem("csession");
+  redirect("/auth");
+}
+
 export const GetCurrentUser = () => sessionStorage.getItem("cuser");
 
 const CreateAccount = async (name, email, password, phonenumber, uid, setMsg, setIsLogin) => {
