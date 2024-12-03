@@ -11,8 +11,8 @@ import { generateNCharCode, getHostDomain } from '../modules/misc.js';
 import { sendEmail } from '../modules/email.js';
 
 export const IsLoggedIn = async () => {
-    const cuser = sessionStorage.getItem("cuser");
-    const csession = sessionStorage.getItem("csession");
+    const cuser = localStorage.getItem("cuser");
+    const csession = localStorage.getItem("csession");
 
     const res = await sql`SELECT name FROM users WHERE id=${cuser} AND currentsession=${csession}`;
 
@@ -69,8 +69,8 @@ const Login = async (email, password, resetPwdMode, setMsg) => {
             setMsg(resetPwdMode ? "Password Changed! Logging In..." : "Logging In...");
             const sessionUID = uuidv4();
             await sql`UPDATE users SET currentsession=${sessionUID} WHERE id=${res[0]["id"]} AND uid=${res[0]["uid"]}`;
-            sessionStorage.setItem("cuser", res[0]["id"]);
-            sessionStorage.setItem("csession", sessionUID);
+            localStorage.setItem("cuser", res[0]["id"]);
+            localStorage.setItem("csession", sessionUID);
             redirect("/home");
         }
         else setMsg("Incorrect Password!");
