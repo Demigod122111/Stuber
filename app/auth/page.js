@@ -45,11 +45,11 @@ const CreateAccount = async (name, email, password, phonenumber, uid, setMsg, se
 
         if (rpy.error == null)
         {
-          setMsg("An email has been sent to activate your account!");
+          setMsg(`A link has been sent to ${email} to activate your account!`);
         }
         else
         {
-          setMsg(`Unable to send email to activate your account! Please contact administrator at info.stuber.rash@gmail.com\nError: ${JSON.stringify(rpy.error)}`);
+          setMsg(`Unable to send link to ${email} to activate your account! Please contact administrator at info.stuber.rash@gmail.com\nError: ${JSON.stringify(rpy.error)}`);
         }
         setIsLogin(true);
     }
