@@ -11,14 +11,16 @@ import { generateNCharCode, getHostDomain } from '../modules/misc.js';
 import { sendEmail } from '../modules/email.js';
 
 export const IsLoggedIn = async () => {
-    const cuser = localStorage.getItem("cuser");
-    const csession = localStorage.getItem("csession");
+  if (typeof window === "undefined") return false;
+  
+  const cuser = localStorage.getItem("cuser");
+  const csession = localStorage.getItem("csession");
 
-    const res = await sql`SELECT name FROM users WHERE id=${cuser} AND currentsession=${csession}`;
+  const res = await sql`SELECT name FROM users WHERE id=${cuser} AND currentsession=${csession}`;
 
-    if (res.length == 0)
-        return false;
-    return true;
+  if (res.length == 0)
+    return false;
+  return true;
 }
 
 export const EnsureLogin = async () => {
@@ -36,7 +38,8 @@ const CreateAccount = async (name, email, password, phonenumber, uid, setMsg, se
         const activationcode = generateNCharCode(6);
         await sql`INSERT INTO users (name, email, password, phonenumber, uid, activationcode) VALUES (${name}, ${email}, ${password}, ${phonenumber}, ${uid}, ${activationcode})`;
 
-        const activationHref = getHostDomain(window.location.href) + `/activate?email=${email}&code=${activationcode}`;
+        const activationHref = `${getHostDomain(typeof window !== "undefined" ? window.location.href : "")}/activate?email=${email}&code=${activationcode}`;
+
 
         sendEmail(email, "Activate your Stuber Account", `<p>Please click the following link to activate your account: <a href="${activationHref}">${activationHref}</a></p>`);
         setMsg("An email has been sent to activate your account!");
