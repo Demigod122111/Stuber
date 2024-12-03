@@ -41,8 +41,12 @@ const CreateAccount = async (name, email, password, phonenumber, uid, setMsg, se
         const activationHref = `${getHostDomain(typeof window !== "undefined" ? window.location.href : "")}/activate?email=${email}&code=${activationcode}`;
 
 
-        await sendEmail(email, "Activate your Stuber Account", `<p>Please click the following link to activate your account: <a href="${activationHref}">${activationHref}</a></p>`);
-        setMsg("An email has been sent to activate your account!");
+        const rpy = await sendEmail(email, "Activate your Stuber Account", `<p>Please click the following link to activate your account: <a href="${activationHref}">${activationHref}</a></p>`);
+
+        if (rpy.error == null)
+          setMsg("An email has been sent to activate your account!");
+        else
+          setMsg("Unable to send email to activate your account! Please contact administrator at info.stuber.rash@gmail.com");
         setIsLogin(true);
     }
     else setMsg("User already exists!");
