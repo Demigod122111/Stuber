@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { sql } from '../modules/database';
 import { redirect } from 'next/navigation';
 
@@ -17,7 +18,7 @@ export default async function Activate({ searchParams }) {
     if (sqlres.length > 0) {
         // Update the database if activation code matches
         await sql`UPDATE users SET activationcode = '' WHERE email = ${email}`;
-        redirect('/auth'); // Redirect to authentication page
+        return <p>Account Activated! <Link href="/auth">Login</Link></p>
     } else {
         // Redirect if the activation code is invalid
         redirect('/auth');

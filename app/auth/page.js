@@ -41,7 +41,7 @@ const CreateAccount = async (name, email, password, phonenumber, uid, setMsg, se
         const activationHref = `${getHostDomain(typeof window !== "undefined" ? window.location.href : "")}/activate?email=${email}&code=${activationcode}`;
 
 
-        sendEmail(email, "Activate your Stuber Account", `<p>Please click the following link to activate your account: <a href="${activationHref}">${activationHref}</a></p>`);
+        await sendEmail(email, "Activate your Stuber Account", `<p>Please click the following link to activate your account: <a href="${activationHref}">${activationHref}</a></p>`);
         setMsg("An email has been sent to activate your account!");
         setIsLogin(true);
     }
