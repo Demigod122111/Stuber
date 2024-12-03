@@ -113,7 +113,7 @@ export default function Auth()
         {
             setTimeout(() => {
                 setMsg('');
-            }, 5000);
+            }, 10000);
         }
     }, [msg]);
 
