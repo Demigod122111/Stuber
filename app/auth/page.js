@@ -7,6 +7,8 @@ import Image from 'next/image.js';
 import logo from '../assets/images/stuber_logo.png';
 import { redirect } from 'next/navigation.js';
 import ResetPwd from '../modules/reset-password.js';
+import { generateNCharCode, getHostDomain } from '../modules/misc.js';
+import { sendEmail } from '../modules/email.js';
 
 export const IsLoggedIn = async () => {
     const cuser = sessionStorage.getItem("cuser");
@@ -31,18 +33,29 @@ const CreateAccount = async (name, email, password, phonenumber, uid, setMsg, se
 
     if (res.length == 0)
     {
-        await sql`INSERT INTO users (name, email, password, phonenumber, uid) VALUES (${name}, ${email}, ${password}, ${phonenumber}, ${uid})`;
-        setMsg("User Created!");
+        const activationcode = generateNCharCode(6);
+        await sql`INSERT INTO users (name, email, password, phonenumber, uid, activationcode) VALUES (${name}, ${email}, ${password}, ${phonenumber}, ${uid}, ${activationcode})`;
+
+        const activationHref = getHostDomain(window.location.href) + `/activate?email=${email}&code=${activationcode}`;
+
+        sendEmail(email, "Activate your Stuber Account", `<p>Please click the following link to activate your account: <a href="${activationHref}">${activationHref}</a></p>`);
+        setMsg("An email has been sent to activate your account!");
         setIsLogin(true);
     }
     else setMsg("User already exists!");
 };
 
 const Login = async (email, password, resetPwdMode, setMsg) => {
-    const res = await sql`SELECT password, uid, id FROM users WHERE email=${email}`;
+    const res = await sql`SELECT password, uid, id, activationcode FROM users WHERE email=${email}`;
     
     if (res.length > 0)
     {
+        if (res[0]["activationcode"].trim() != '')
+        {
+          setMsg("Please activate your account to proceed!");
+          return;
+        }
+
         if (resetPwdMode)
         {
             const npwd = await encryptPassword(res[0]["uid"], password);
@@ -151,7 +164,6 @@ export default function Auth()
                         className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-700 text-gray-200"
                         placeholder=""
                         value={email}
-                        onChange={({target}) => setEmail(target.value)}
                         autoComplete='on'
                         required
                         disabled
@@ -214,9 +226,13 @@ export default function Auth()
                 </button>
 
                 {
+                (email != null && email != undefined && email.trim() != "")
+                ? (
                 resetPwdMode 
                 ? <p className="my-2 py-2 text-gray-500 hover:text-gray-200" style={{cursor: "pointer"}} onClick={() => setResetPwdMode(false)}>Remembered Password?</p>
                 : <p className="my-2 py-2 text-gray-500 hover:text-gray-200" style={{cursor: "pointer"}} onClick={() => setResetPwdMode(true)}>Forgot Password?</p>
+                )
+                : <></>
                 }
               </form>
             ) : (
