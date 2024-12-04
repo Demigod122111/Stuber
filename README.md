@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Stuber
 
-## Getting Started
+Stuber is a ride-sharing web application developed for the Caribbean Stem Olympiad (CSO). This innovative platform caters specifically to students, providing efficient, secure, and user-friendly after hours transportation solutions. Built with modern web technologies and deployed seamlessly on Vercel, Stuber integrates various APIs and frameworks to deliver a robust and reliable user experience.
 
-First, run the development server:
+## Features (WIP)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Student-Focused Design**: Tailored to meet the unique needs of students.
+- **Real-Time Ride Management**: Dynamic ride updates for seamless coordination.
+- **Neon PostgreSQL Database**: Reliable and scalable database for managing user and ride information.
+- **Modern UI/UX**: Powered by Next.js and styled for a polished user experience.
+- **High-Performance Deployment**: Hosted on Vercel for speed and scalability.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies Used
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Frontend
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Next.js](https://nextjs.org/): A React framework for server-side rendering and static site generation.
+- Tailwind CSS: Provides sleek and responsive styling.
 
-## Learn More
+### Backend
 
-To learn more about Next.js, take a look at the following resources:
+- [Neon PostgreSQL](https://neon.tech/): An advanced PostgreSQL database solution for data management.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Vercel](https://vercel.com/): Ensures fast and reliable deployment of the application.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is licensed under the MIT License. See the `LICENSE` file for details.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Acknowledgments
+
+- **Caribbean Stem Olympiad (CSO)**: For inspiring this project.
+- **Neon.tech, Vercel, and other API providers**: For their excellent tools and services.
+
+---
+
+Visit the live site: [Stuber](https://stuber.vercel.app)
+
+Happy coding!
+
