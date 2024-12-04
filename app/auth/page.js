@@ -36,13 +36,13 @@ export const Logout = () => {
 
 export const GetCurrentUser = () => sessionStorage.getItem("cuser");
 
-const CreateAccount = async (name, email, password, phonenumber, uid, setMsg, setIsLogin) => {
+const CreateAccount = async (name, email, password, phonenumber, uid, role, setMsg, setIsLogin) => {
     const res = await sql`SELECT name FROM users WHERE email=${email}`;
 
     if (res.length == 0)
     {
         const activationcode = generateNCharCode(6);
-        await sql`INSERT INTO users (name, email, password, phonenumber, uid, activationcode) VALUES (${name}, ${email}, ${password}, ${phonenumber}, ${uid}, ${activationcode})`;
+        await sql`INSERT INTO users (name, email, password, phonenumber, uid, activationcode, role) VALUES (${name}, ${email}, ${password}, ${phonenumber}, ${uid}, ${activationcode}, ${role})`;
 
         const activationHref = `${getHostDomain(typeof window !== "undefined" ? window.location.href : "")}/activate?email=${email}&code=${activationcode}`;
 
@@ -104,10 +104,13 @@ export default function Auth()
     const [email, setEmail] = useState('');
     const [phonenumber, setPhonenumber] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('Student');
+
     const [msg, setMsg] = useState('');
     const [resetPwdMode, setResetPwdMode] = useState(false);
     const [resetCode, setResetCode] = useState('');
     const [expectedResetCode, setExpectedResetCode] = useState();
+
 
     useEffect(() => {
         if (msg != '')
@@ -130,6 +133,10 @@ export default function Auth()
             setMsg(`Reset code sent to ${email}`);
             setExpectedResetCode(code);
         }
+    }
+
+    const HasEmail = () => {
+      return email != null && email != undefined && email.trim() != "";
     }
 
     return (<>
@@ -244,11 +251,11 @@ export default function Auth()
                 </button>
 
                 {
-                (email != null && email != undefined && email.trim() != "")
+                (true)
                 ? (
                 resetPwdMode 
                 ? <p className="my-2 py-2 text-gray-500 hover:text-gray-200" style={{cursor: "pointer"}} onClick={() => setResetPwdMode(false)}>Remembered Password?</p>
-                : <p className="my-2 py-2 text-gray-500 hover:text-gray-200" style={{cursor: "pointer"}} onClick={() => setResetPwdMode(true)}>Forgot Password?</p>
+                : <p className="my-2 py-2 text-gray-500 hover:text-gray-200" style={{cursor: "pointer"}} onClick={() => setResetPwdMode(HasEmail() ? true : false)}>Forgot Password?</p>
                 )
                 : <></>
                 }
@@ -257,7 +264,7 @@ export default function Auth()
               <form onSubmit={(e) => {
                 e.preventDefault();
                 const uid = uuidv4();
-                encryptPassword(uid, password).then((val) => CreateAccount(name, email, val, phonenumber, uid, setMsg, setIsLogin));
+                encryptPassword(uid, password).then((val) => CreateAccount(name, email, val, phonenumber, uid, role, setMsg, setIsLogin));
               }} >
                 <div className="mb-4">
                   <label className="block text-gray-300 text-sm font-bold mb-2">Full Name</label>
@@ -303,6 +310,51 @@ export default function Auth()
                     required
                   />
                 </div>
+
+                <div className="mb-4">
+                  <label className="block text-gray-300 text-sm font-bold mb-2">Role</label>
+                  <div className="flex space-x-4">
+                      {/* Driver Option */}
+                      <label
+                          className={`cursor-pointer w-full text-center px-3 py-2 rounded-md border focus:outline-none transition ${
+                              role === 'Driver'
+                                  ? 'bg-green-600 border-green-600 text-white'
+                                  : 'bg-gray-700 border-gray-500 text-gray-300 hover:bg-gray-600'
+                          }`}
+                      >
+                          <input
+                              type="radio"
+                              name="role"
+                              value="Driver"
+                              className="hidden"
+                              onChange={() => setRole('Driver')}
+                              checked={role === 'Driver'}
+                          />
+                          Driver
+                      </label>
+
+                      {/* Student Option */}
+                      <label
+                          className={`cursor-pointer w-full text-center px-3 py-2 rounded-md border focus:outline-none transition ${
+                              role === 'Student'
+                                  ? 'bg-green-600 border-green-600 text-white'
+                                  : 'bg-gray-700 border-gray-500 text-gray-300 hover:bg-gray-600'
+                          }`}
+                      >
+                          <input
+                              type="radio"
+                              name="role"
+                              value="Student"
+                              className="hidden"
+                              onChange={() => setRole('Student')}
+                              checked={role === 'Student'}
+                          />
+                          Student
+                      </label>
+                  </div>
+              </div>
+                
+
                 <button
                   type="submit"
                   className="w-full bg-yellow-500 text-black py-2 rounded-md hover:bg-yellow-600 focus:outline-none"

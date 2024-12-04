@@ -40,7 +40,7 @@ export function getHostDomain(url) {
 
 export const GetUserData = (setUserData, setters) => {
     const getUserData = async (id, session) => {
-        const data = await sql`SELECT name, email FROM users WHERE id=${id} AND currentsession=${session}`;
+        const data = await sql`SELECT * FROM users WHERE id=${id} AND currentsession=${session}`;
         if (data.length > 0)
         setUserData(data[0]);
 

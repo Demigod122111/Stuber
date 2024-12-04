@@ -49,6 +49,7 @@ export default function Account()
                     : <h1 className="text-2xl font-semibold">{name}</h1>
                     }
                     <p className="text-gray-400">{userData["email"]}</p>
+                    <p className="text-gray-400 px-2 py-2 rounded-xl bg-gray-800 font-semibold">{userData["role"]}</p>
                     </div>
             
                     {/* Edit Profile Button */
@@ -100,14 +101,8 @@ export default function Account()
                 <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto">
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
-                            <span>Change Email</span>
-                            <button className="bg-blue-600 px-4 py-2 rounded-lg text-white hover:bg-blue-700">
-                                Edit
-                            </button>
-                        </div>
-                        <div className="flex items-center justify-between">
                             <span>Change Phone Number</span>
-                            <button className="bg-blue-600 px-4 py-2 rounded-lg text-white hover:bg-blue-700">
+                            <button className="bg-gray-600 px-4 py-2 rounded-lg text-white hover:bg-gray-700">
                                 Edit
                             </button>
                         </div>
@@ -124,15 +119,9 @@ export default function Account()
                             <input
                                 type="checkbox"
                                 className="form-checkbox h-5 w-5 text-blue-600 bg-gray-800 border-gray-700 rounded"
+                                checked
                             />
                             <span>Email Notifications</span>
-                        </label>
-                        <label className="flex items-center space-x-4">
-                            <input
-                                type="checkbox"
-                                className="form-checkbox h-5 w-5 text-blue-600 bg-gray-800 border-gray-700 rounded"
-                            />
-                            <span>SMS Notifications</span>
                         </label>
                     </div>
                 </div>
