@@ -172,7 +172,7 @@ export default function Account()
                         </div>
                     ) : (userData["role"] === "Driver" ? (
                         <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto space-y-4">
-                            <p className="text-gray-400">Upload a picture of your driver's license and other relevant document(s):</p>
+                            <p className="text-gray-400">Upload a picture of your driver&apos;s license and other relevant document(s):</p>
                             <UploadFile 
                                 label="Driver's License & Other Documents" 
                                 onUpload={(dataUrl) => {

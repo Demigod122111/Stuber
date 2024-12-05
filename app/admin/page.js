@@ -113,7 +113,7 @@ function TopDrivers({topDrivers})
         <div className="mt-4 space-y-2">
         {
             topDrivers.map((driver) =>
-                <div className="flex justify-between">
+                <div className="flex justify-between" key={driver["email"]}>
                     <p className="text-gray-600">{driver["name"]} ({driver["email"]})</p>
                     <div className="flex justify-evenly gap-4">
                         <p className="text-gray-900 font-bold">{Number(driver["timesrated"]) == 0 ? driver["rating"].toFixed(1) : (Number(driver["rating"]) / Number(driver["timesrated"])).toFixed(1)}/5.0</p>
@@ -141,7 +141,7 @@ export default function Admin()
         <NavBar />
         <div className="text-white p-6 rounded-lg shadow-lg max-w mx-auto flex justify-center">
             <div className="space-y-4">
-                <p className="text-lg text-red-400">You don't have enough permissions to access this page!</p>
+                <p className="text-lg text-red-400">You don&apos;t have enough permissions to access this page!</p>
                 <p className="text-base text-blue-400">Current Permission Level: {userData["oppermissionlevel"]}</p>
             </div>
         </div>
