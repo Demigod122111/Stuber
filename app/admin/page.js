@@ -55,9 +55,9 @@ const AdminDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col w-screen">
+      <div className="flex-1 flex flex-col overflow-x-hidden w-screen">
         {/* Topbar */}
-        <div className="flex justify-between items-center p-4 bg-gray-900 text-white shadow-lg">
+        <div className="flex justify-between items-center p-4 bg-gray-900 text-white shadow-lg w-full">
           <h2 className="text-xl font-semibold">{sidebarOpen ? "" : "Dashboard"}</h2>
           <div className="flex space-x-4">
             <button className="bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700" onClick={Logout}>Logout</button>
@@ -65,7 +65,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Content */}
-        <div className="p-6 flex flex-wrap gap-4 h-screen overflow-y-auto overflow-x-auto w-full">
+        <div className="p-6 flex flex-wrap gap-4 h-screen w-full">
           <StatsCard title="Total Users" value={totalUsers} />
           <StatsCard title="Total Drivers" value={totalDrivers} />
           <StatsCard title="Completed Rides" value="N/A" />
@@ -87,14 +87,14 @@ const SidebarLink = ({ href, label, sidebarOpen }) => (
 );
 
 const StatsCard = ({ title, value }) => (
-  <div className="bg-white rounded-lg shadow-lg p-6 w-64">
+  <div className="bg-white rounded-lg shadow-lg p-6 w-64 overflow-x-auto">
     <h3 className="text-gray-700 font-semibold text-lg">{title}</h3>
     <p className="text-2xl font-bold text-gray-900 mt-2">{value}</p>
   </div>
 );
 
 const RecentActivities = () => (
-  <div className="bg-white rounded-lg shadow-lg p-6 w-full">
+  <div className="bg-white rounded-lg shadow-lg p-6 w-full overflow-x-auto">
     <h3 className="text-lg font-semibold text-gray-700">Recent Activities</h3>
     <ul className="mt-4 space-y-2">
         {/*
@@ -108,7 +108,7 @@ const RecentActivities = () => (
 
 function TopDrivers({topDrivers}) 
 {
-    return <div className="bg-white rounded-lg shadow-lg p-6 w-full">
+    return <div className="bg-white rounded-lg shadow-lg p-6 w-full overflow-x-auto">
         <h3 className="text-lg font-semibold text-gray-700">Top Drivers</h3>
         <div className="mt-4 space-y-2">
         {
