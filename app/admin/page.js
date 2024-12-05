@@ -55,7 +55,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col w-screen">
         {/* Topbar */}
         <div className="flex justify-between items-center p-4 bg-gray-900 text-white shadow-lg">
           <h2 className="text-xl font-semibold">{sidebarOpen ? "" : "Dashboard"}</h2>
