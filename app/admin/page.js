@@ -65,7 +65,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Content */}
-        <div className="p-6 flex flex-wrap gap-4 h-screen overflow-y-auto overflow-x-auto">
+        <div className="p-6 flex flex-wrap gap-4 h-screen overflow-y-auto overflow-x-auto w-full">
           <StatsCard title="Total Users" value={totalUsers} />
           <StatsCard title="Total Drivers" value={totalDrivers} />
           <StatsCard title="Completed Rides" value="N/A" />
