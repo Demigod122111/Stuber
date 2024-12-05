@@ -6,6 +6,7 @@ import Logo from "../assets/images/stuber_logo.png";
 import Image from 'next/image';
 import { GetUserData, UpdateUserData } from "../modules/misc";
 import Link from "next/link";
+import UploadFile from "../components/fileupload";
 
 export default function Account()
 {
@@ -15,11 +16,24 @@ export default function Account()
     const [editMode, setEditMode] = useState(false);
 
     const [name, setName] = useState("");
+    const [emailNotifications, setEmailNotifications] = useState(true);
+
+    const [verificationImages, setVerificationImages] = useState([]);
 
     useEffect(() => {
         EnsureLogin();
-        GetUserData(setUserData, {"name": setName});
+        GetUserData(setUserData, {"name": setName, "emailnotifications": setEmailNotifications});
     }, []);
+
+    const CanShowSection = (section) => {
+        return section.show == undefined || section.show();
+    }
+
+    const completeVerification = () => {
+        UpdateUserData("identitydocuments", JSON.stringify(verificationImages)).then(() => {
+            UpdateUserData("identityverified", "in progress").then(() => window.location.reload())
+        });
+    }
 
     const sections = {
         profile: {
@@ -100,12 +114,7 @@ export default function Account()
             content: (
                 <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto">
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                            <span>Change Phone Number</span>
-                            <button className="bg-gray-600 px-4 py-2 rounded-lg text-white hover:bg-gray-700">
-                                Edit
-                            </button>
-                        </div>
+                        <p>Coming soon...</p>
                     </div>
                 </div>
             ),
@@ -119,7 +128,11 @@ export default function Account()
                             <input
                                 type="checkbox"
                                 className="form-checkbox h-5 w-5 text-blue-600 bg-gray-800 border-gray-700 rounded"
-                                checked
+                                checked={emailNotifications != false}
+                                onChange={({target}) => {
+                                    setEmailNotifications(target.checked);
+                                    UpdateUserData("emailnotifications", target.checked);
+                                }}
                             />
                             <span>Email Notifications</span>
                         </label>
@@ -137,6 +150,55 @@ export default function Account()
                 </div>
             ),
         },
+
+        verify: {
+            title: "Verify Identity",
+            show: () => userData["identityverified"] != "verified" && userData["identityverified"] != undefined,
+            content: (<>
+                {
+                    userData["identityverified"] == "in progress" ?
+                    <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto space-y-4">
+                        <p className="text-gray-400">Your identity review is in progress!</p>
+                    </div>
+                    : (userData["role"] === "Student" ? (
+                        <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto space-y-4">
+                            <p className="text-gray-400">Upload a picture of your school ID and other relevant document(s):</p>
+                            <UploadFile 
+                                label="School ID & Other Documents" 
+                                onUpload={(dataUrl) => {
+                                    setVerificationImages(dataUrl)
+                                }}
+                            />
+                        </div>
+                    ) : (userData["role"] === "Driver" ? (
+                        <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto space-y-4">
+                            <p className="text-gray-400">Upload a picture of your driver's license and other relevant document(s):</p>
+                            <UploadFile 
+                                label="Driver's License & Other Documents" 
+                                onUpload={(dataUrl) => {
+                                    setVerificationImages(prev => [...prev, dataUrl])
+                                }}
+                            />
+                        </div>
+                    ) : <></>))
+                }
+                
+                { verificationImages.length > 0
+                ? <div className="w-full flex justify-center py-4">
+                    <button
+                        className="w-50 bg-green-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out"
+                        type="button"
+                        onClick={completeVerification}
+                    >
+                        Submit Documents for Review
+                    </button>
+                </div>
+                : <></>
+                }
+                </>
+            )
+        }
+        
     };
 
     return (
@@ -157,12 +219,13 @@ export default function Account()
             </div>
             <ul className="flex lg:flex-col justify-around lg:justify-start items-center lg:items-start space-y-0 lg:space-y-4 overflow-x-auto pb-2">
                 <li
-                key="home"
+                key="__home__"
                 className="cursor-pointer p-3 rounded-lg transition text-center lg:text-left text-gray-400"
                 >
                     <Link href="/home">Home</Link>
                 </li>
             {Object.keys(sections).map((sectionKey) => (
+                CanShowSection(sections[sectionKey]) ?
                 <li
                 key={sectionKey}
                 className={`cursor-pointer p-3 rounded-lg transition text-center lg:text-left ${
@@ -174,15 +237,18 @@ export default function Account()
                 >
                 {sections[sectionKey].title}
                 </li>
+                : <></>
             ))}
             </ul>
 
           </div>
       
           {/* Section Content */}
-          <div className="flex-1 p-8">
+          <div className="flex-1 p-8 overflow-y-hidden">
             <h2 className="text-3xl font-semibold mb-4">{sections[selectedSection].title}</h2>
-            {sections[selectedSection].content}
+            <div className="h-full w-full overflow-y-auto pb-8">
+                {sections[selectedSection].content}
+            </div>
           </div>
         </div>
       );      

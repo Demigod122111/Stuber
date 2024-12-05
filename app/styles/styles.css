@@ -66,15 +66,6 @@
   width: auto;
 }
 
-nav {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  padding: 10px 10px 10px 20px;
-}
-
 .nav-bar-logo-link {
   display: inline-block;
 }

@@ -1,22 +1,15 @@
 "use client"
 
-import { useEffect } from 'react'
-import "./styles.css"
-import { EnsureLogin } from '../auth/page';
+import "../styles/styles.css";
 import Logo from "../assets/images/stuber_logo.png";
 import Image from 'next/image';
 import NavBar from '../components/navbar';
 
 
 export default function Home() {
-  useEffect(() => {
-    EnsureLogin();
-  })
-
-  return (
+  return (<>
+    <NavBar />
     <div className="container">
-      <NavBar />
-      
       <div className="find-ride-menu">
         <h1>Get home safely with</h1>
         <Image src={Logo} className="find-ride-menu-logo" alt="Stuber Logo"></Image>
@@ -26,5 +19,5 @@ export default function Home() {
         <button className="see-prices-button">See prices</button>
       </div>
     </div>
-  )
+    </>)
 }

@@ -1,12 +1,32 @@
-// components/NavBar.jsx
+"use client";
+
 import Link from 'next/link';
 import Logo from "../assets/images/stuber_logo.png";
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LiveTime from './livetime';
+import { EnsureLogin } from '../auth/page';
+import { GetUserData } from '../modules/misc';
+import "../styles/styles.css";
 
 export default function NavBar() {
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const [userData, setUserData] = useState({});
+
+    useEffect(() => {
+        EnsureLogin();
+        GetUserData(setUserData);
+    }, []);
+
+    const CanShowLink = (link) => {
+        return link.show == undefined || link.show();
+    }
+
+    const navLinks = [
+        { href: "/account", label: "Account" },
+        { href: "/admin", label: "Admin", show: () => Number(userData["oppermissionlevel"]) >= 4 },
+    ];
 
     return (
         <nav className="bg-gray-900 text-white shadow-lg">
@@ -18,19 +38,24 @@ export default function NavBar() {
                         className="nav-bar-logo" 
                         alt="Stuber Logo"
                     />
-
+    
                     <LiveTime />
-
+    
                     {/* Navigation Links for Desktop */}
                     <div className="hidden md:flex space-x-8 items-center text-lg">
-                        <Link
-                            href="/account"
-                            className="hover:text-blue-400 transition duration-300"
-                        >
-                            Account
-                        </Link>
+                        {navLinks.map((link) => (
+                            CanShowLink(link) ?
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="hover:text-blue-400 transition duration-300"
+                            >
+                                {link.label}
+                            </Link>
+                            : <></>
+                        ))}
                     </div>
-
+    
                     {/* Mobile Menu Button */}
                     <div className="md:hidden flex items-center">
                         <button
@@ -66,21 +91,27 @@ export default function NavBar() {
                     </div>
                 </div>
             </div>
-
+    
             {/* Mobile Menu */}
             {isMobileMenuOpen && (
                 <div className="md:hidden bg-gray-800 text-lg">
                     <div className="space-y-2 px-4 py-4">
-                        <Link
-                            href="/account"
-                            className="block text-gray-300 hover:text-blue-400 transition duration-300"
-                            onClick={() => setMobileMenuOpen(false)}
-                        >
-                            Account
-                        </Link>
+                        {navLinks.map((link) => (
+                            CanShowLink(link) ?
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="block text-gray-300 hover:text-blue-400 transition duration-300"
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                {link.label}
+                            </Link>
+                            : <></>
+                        ))}
                     </div>
                 </div>
             )}
         </nav>
     );
+    
 }
