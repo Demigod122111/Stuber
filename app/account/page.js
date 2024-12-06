@@ -8,7 +8,8 @@ import { GetUserData, UpdateUserData } from "../modules/misc";
 import Link from "next/link";
 import UploadFile from "../components/fileupload";
 
-const savedSection = (sec) => {
+const savedSection = () => {
+    const sec = sessionStorage.getItem("account-section");
     if (sec == undefined || sec == null) 
         return "profile";
     return sec;
@@ -16,7 +17,7 @@ const savedSection = (sec) => {
 
 export default function Account()
 {
-    const [selectedSection, setSelectedSection] = useState(savedSection(sessionStorage.getItem("account-section")));
+    const [selectedSection, setSelectedSection] = useState('profile');
     const [userData, setUserData] = useState({});
 
     const [editMode, setEditMode] = useState(false);
@@ -29,6 +30,8 @@ export default function Account()
     useEffect(() => {
         EnsureLogin();
         GetUserData(setUserData, {"name": setName, "emailnotifications": setEmailNotifications});
+        
+        setSelectedSection(savedSection());
     }, []);
 
     const CanShowSection = (section) => {
@@ -44,8 +47,6 @@ export default function Account()
     const ensureValidSection = () => {
         if (!Object.keys(sections).includes(selectedSection))
             setSelectedSection("profile");
-
-        sessionStorage.removeItem("account-section");
     }
 
     const sections = {
