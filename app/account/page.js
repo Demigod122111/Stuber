@@ -9,6 +9,8 @@ import Link from "next/link";
 import UploadFile from "../components/fileupload";
 
 const savedSection = () => {
+    if(!sessionStorage) return "profile";
+    
     const sec = sessionStorage.getItem("account-section");
     if (sec == undefined || sec == null) 
         return "profile";
