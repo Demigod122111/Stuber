@@ -7,6 +7,19 @@ import { EnsureLogin, Logout } from "../auth/page";
 import { GetUserData } from "../modules/misc";
 import NavBar from "../components/navbar";
 import { sql } from "../modules/database";
+import { redirect } from "next/navigation";
+
+export function EnsureAdmin(level)
+{
+    let userData = {};
+
+    const setUserData = (data) => userData = data;
+
+    GetUserData(setUserData).then(user => {
+        if (userData["oppermissionlevel"] < level)
+            redirect("/admin");
+    })
+}
 
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -43,6 +56,7 @@ const AdminDashboard = () => {
         <nav className="mt-10 space-y-2">
           <SidebarLink href="/admin" label="Overview" sidebarOpen={sidebarOpen} />
           <SidebarLink href="/admin/identity-reviews" label="Identity Reviews" sidebarOpen={sidebarOpen} />
+          <SidebarLink href="/admin/users" label="Users" sidebarOpen={sidebarOpen} />
         </nav>
         <div className="absolute bottom-0 p-4">
           <button
@@ -134,6 +148,18 @@ export default function Admin()
         EnsureLogin();
         GetUserData(setUserData);
     }, []);
+
+    if (userData["oppermissionlevel"] == undefined)
+    {
+        return (<>
+          <NavBar />
+          <div className="text-white p-6 rounded-lg shadow-lg max-w mx-auto flex justify-center">
+              <div className="space-y-4">
+                  <p className="text-lg text-blue-400">Searching for permission level...</p>
+              </div>
+          </div>
+        </>);
+    }
 
     if (Number(userData["oppermissionlevel"]) < 4) 
     {

@@ -2,6 +2,7 @@
 import NavBar from "@/app/components/navbar";
 import { sql } from "@/app/modules/database";
 import { useEffect, useState } from "react";
+import { EnsureAdmin } from "../page";
 
 function FullScreenImageViewer({ imageUrl, onClose }) {
     return (
@@ -33,6 +34,7 @@ export default function IReviews()
     const [viewing, setViewing] = useState("");
 
     useEffect(() => {
+        EnsureAdmin(4);
         (sql`SELECT * FROM users WHERE identityverified='in progress'`).then((res) => setAwaitingReview(res));
     }, [])
 

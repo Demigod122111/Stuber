@@ -8,6 +8,7 @@ import LiveTime from './livetime';
 import { EnsureLogin } from '../auth/page';
 import { GetUserData } from '../modules/misc';
 import "../styles/styles.css";
+import { redirect } from 'next/navigation';
 
 export default function NavBar() {
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -29,20 +30,21 @@ export default function NavBar() {
     ];
 
     return (
-        <nav className="bg-gray-900 text-white shadow-lg w-screen">
+        <nav className="bg-gray-900 text-white shadow-lg">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
                     {/* Logo Section */}
                     <Image 
                         src={Logo} 
-                        className="nav-bar-logo" 
+                        className="nav-bar-logo cursor-pointer" 
                         alt="Stuber Logo"
+                        onClick={() => redirect("/home")}
                     />
     
                     <LiveTime />
     
                     {/* Navigation Links for Desktop */}
-                    <div className="hidden md:flex space-x-8 items-center text-lg">
+                    <div className="hidden md:flex space-x-8 items-center text-lg" key="desktop">
                         {navLinks.map((link) => (
                             CanShowLink(link) ?
                             <Link

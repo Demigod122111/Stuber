@@ -41,8 +41,8 @@ export function getHostDomain(url) {
 export const GetUserData = (setUserData, setters) => {
     const getUserData = async (id, session) => {
         const data = await sql`SELECT * FROM users WHERE id=${id} AND currentsession=${session}`;
-        if (data.length > 0)
-        setUserData(data[0]);
+        if (data.length > 0 && setUserData != undefined)
+            setUserData(data[0]);
 
         if (setters != undefined)
         {
@@ -62,4 +62,13 @@ export const UpdateUserData = (field, data) => {
     }
 
     return updateUserData(localStorage.getItem("cuser"), localStorage.getItem("csession"));
+}
+
+export const UpdateGlobalUserData = (email, field, data) => {
+    const updateUserData = async (email) => {
+        const query = `UPDATE users SET ${field} = $1 WHERE email = $2`;
+        await sql(query, [data, email]);
+    }
+
+    return updateUserData(email);
 }

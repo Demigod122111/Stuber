@@ -8,9 +8,16 @@ import { GetUserData, UpdateUserData } from "../modules/misc";
 import Link from "next/link";
 import UploadFile from "../components/fileupload";
 
+const savedSection = () => {
+    const sec = sessionStorage.getItem("account-section");
+    if (sec == undefined || sec == null) 
+        return "profile";
+    return sec;
+}
+
 export default function Account()
 {
-    const [selectedSection, setSelectedSection] = useState('profile');
+    const [selectedSection, setSelectedSection] = useState(savedSection());
     const [userData, setUserData] = useState({});
 
     const [editMode, setEditMode] = useState(false);
@@ -33,6 +40,13 @@ export default function Account()
         UpdateUserData("identitydocuments", JSON.stringify(verificationImages)).then(() => {
             UpdateUserData("identityverified", "in progress").then(() => window.location.reload())
         });
+    }
+
+    const ensureValidSection = () => {
+        if (!Object.keys(sections).includes(selectedSection))
+            setSelectedSection("profile");
+
+        sessionStorage.removeItem("account-section");
     }
 
     const sections = {
@@ -151,6 +165,28 @@ export default function Account()
             ),
         },
 
+        history: {
+            title: 'History',
+            content: (
+                <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto">
+                    <div className="space-y-4">
+                        <p>Coming soon...</p>
+                    </div>
+                </div>
+            ),
+        },
+
+        support: {
+            title: 'Support',
+            content: (
+                <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto">
+                    <div className="space-y-4">
+                        <p>Coming soon...</p>
+                    </div>
+                </div>
+            ),
+        },
+
         verify: {
             title: "Verify Identity",
             show: () => userData["identityverified"] != "verified" && userData["identityverified"] != undefined,
@@ -203,6 +239,7 @@ export default function Account()
 
     return (
         <div className="flex flex-col lg:flex-row h-screen bg-gray-900 text-white">
+          {ensureValidSection()}
           {/* Sidebar */}
           <div className="w-full lg:w-1/4 bg-gray-800 p-5 shadow-lg lg:h-full">
             <div className="flex lg:flex-col justify-between items-center">
