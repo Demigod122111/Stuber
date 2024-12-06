@@ -8,10 +8,7 @@ import { GetUserData, UpdateUserData } from "../modules/misc";
 import Link from "next/link";
 import UploadFile from "../components/fileupload";
 
-const savedSection = () => {
-    if(!sessionStorage == undefined) return "profile";
-
-    const sec = sessionStorage.getItem("account-section");
+const savedSection = (sec) => {
     if (sec == undefined || sec == null) 
         return "profile";
     return sec;
@@ -19,7 +16,7 @@ const savedSection = () => {
 
 export default function Account()
 {
-    const [selectedSection, setSelectedSection] = useState(savedSection());
+    const [selectedSection, setSelectedSection] = useState(savedSection(sessionStorage.getItem("account-section")));
     const [userData, setUserData] = useState({});
 
     const [editMode, setEditMode] = useState(false);
