@@ -3,8 +3,9 @@ import NavBar from "@/app/components/navbar";
 import { sql } from "@/app/modules/database";
 import { useEffect, useState } from "react";
 import { EnsureAdmin } from "../page";
+import Image from "next/image";
 
-function FullScreenImageViewer({ imageUrl, onClose }) {
+export function FullScreenImageViewer({ imageUrl, onClose }) {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
             {/* Close Button */}
@@ -17,16 +18,21 @@ function FullScreenImageViewer({ imageUrl, onClose }) {
             </button>
 
             {/* Image */}
-            <div className="max-w-screen max-h-screen flex justify-center items-center p-4">
-                <img
-                    src={imageUrl}
-                    alt="Full screen view"
-                    className="max-h-full max-w-full rounded-lg shadow-lg"
-                />
+            <div className="max-w-screen max-h-screen flex justify-center items-center p-16"> {/* Increased padding */}
+                <div className="m-8"> {/* Added margin around the image */}
+                    <Image
+                        src={imageUrl}
+                        alt="Full screen view"
+                        width={16}
+                        height={16}
+                        className="max-h-full max-w-full min-h-[75%] w-auto rounded-lg shadow-lg"
+                    />
+                </div>
             </div>
         </div>
     );
 }
+
 
 export default function IReviews()
 {

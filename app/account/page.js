@@ -6,12 +6,16 @@ import Logo from "../assets/images/stuber_logo.png";
 import Image from 'next/image';
 import { GetUserData, UpdateUserData } from "../modules/misc";
 import Link from "next/link";
-import UploadFile from "../components/fileupload";
+import { UploadImageM, UploadImageS } from "../components/fileupload";
+import { sql } from "../modules/database";
+import { decryptPassword, encryptPassword } from "../modules/security";
+import { FullScreenImageViewer } from "../admin/identity-reviews/page";
 
 const savedSection = () => {
     const sec = sessionStorage.getItem("account-section");
     if (sec == undefined || sec == null) 
         return "profile";
+    sessionStorage.removeItem("account-section");
     return sec;
 }
 
@@ -24,15 +28,39 @@ export default function Account()
 
     const [name, setName] = useState("");
     const [emailNotifications, setEmailNotifications] = useState(true);
+    const [profilePic, setProfilePic] = useState("");
+
+    const [viewing, setViewing] = useState("");
 
     const [verificationImages, setVerificationImages] = useState([]);
 
+    const [supportMsg, setSupportMsg] = useState("");
+    const [securityMsg, setSecurityMsg] = useState("");
+
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
     useEffect(() => {
         EnsureLogin();
-        GetUserData(setUserData, {"name": setName, "emailnotifications": setEmailNotifications});
+        GetUserData(setUserData, {"name": setName, "emailnotifications": setEmailNotifications, "profilepic": setProfilePic});
         
         setSelectedSection(savedSection());
     }, []);
+
+    useEffect(() => {
+        if (supportMsg == "") return;
+        setTimeout(() => {
+            setSupportMsg("");
+        }, 10000);
+    }, [supportMsg])
+
+    useEffect(() => {
+        if (securityMsg == "") return;
+        setTimeout(() => {
+            setSecurityMsg("");
+        }, 10000);
+    }, [securityMsg])
 
     const CanShowSection = (section) => {
         return section.show == undefined || section.show();
@@ -43,6 +71,42 @@ export default function Account()
             UpdateUserData("identityverified", "in progress").then(() => window.location.reload())
         });
     }
+
+    const handlePasswordChange = (e) => {
+        e.preventDefault();
+    
+        // Validate new password and confirmation match
+        if (newPassword !== confirmPassword) {
+            setSecurityMsg('New password and confirmation do not match!');
+            return;
+        }
+    
+        // Prepare data for the backend
+        const passwordData = {
+            currentPassword,
+            newPassword,
+        };
+    
+        decryptPassword(userData["uid"], userData["password"]).then((curr) => {
+            if (passwordData.currentPassword == curr)
+                encryptPassword(userData["uid"], passwordData.newPassword).then((val) => {
+                    UpdateUserData("password", JSON.stringify(val))
+                    .then(() => setSecurityMsg("Password Changed!"))
+                    .catch((err) => setSecurityMsg(JSON.stringify(err)))
+                })
+            else
+            {
+                setSecurityMsg("Current Password is not the same as provided!");
+                setCurrentPassword(passwordData.currentPassword);
+                setNewPassword(passwordData.newPassword);
+                setConfirmPassword(passwordData.newPassword);
+            }
+        }) 
+        
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+    };
 
     const ensureValidSection = () => {
         if (!Object.keys(sections).includes(selectedSection))
@@ -58,7 +122,25 @@ export default function Account()
                     {/* Profile Picture */}
                     <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center">
                     {/* Replace with an actual profile image */}
-                    <span className="text-gray-400 text-2xl font-bold">{name == '' ? "?" : name[0].toUpperCase()}</span>
+                    {
+                        (profilePic != undefined && profilePic != null && profilePic.trim() != "")
+                        ? <Image 
+                            src={profilePic} 
+                            width={16} 
+                            height={16} 
+                            className="w-full h-full rounded-full cursor-pointer" 
+                            onClick={({target}) => setViewing(target.src)}
+                            alt="User Profile Picture"
+                        />
+                        : <span className="text-gray-400 text-2xl font-bold">{name == '' ? "?" : name[0].toUpperCase()}</span>
+                    }
+
+                    {viewing != "" && (
+                        <FullScreenImageViewer
+                            imageUrl={viewing}
+                            onClose={() => setViewing("")}
+                        />
+                    )}
                     </div>
             
                     {/* Profile Information */}
@@ -83,12 +165,32 @@ export default function Account()
                     {/* Edit Profile Button */
                     editMode
                     ?
+                    <>
                     <form onSubmit={(e) => {
                         e.preventDefault();
                         UpdateUserData("name", name);
+                        UpdateUserData("profilepic", profilePic);
 
                         setEditMode(false);
                     }} id="changes" className="flex flex-col gap-4" style={{width: "50%"}}>
+                            <div className="flex gap-4 overflow-x-auto">
+                                <UploadImageS 
+                                    label="Change Profile Picture" 
+                                    onUpload={(dataUrl) => {
+                                        setProfilePic(dataUrl);
+                                    }}
+                                    showPreview={false}
+                                />
+
+                                <button
+                                    className="bg-gray-800 text-white font-semibold px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300 ease-in-out"
+                                    type="button"
+                                    onClick={() => setProfilePic("")}
+                                >
+                                Remove Picture
+                                </button>
+                            </div>
+
                             <button
                             className="w-full bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out"
                             type="submit"
@@ -99,11 +201,12 @@ export default function Account()
                             <button
                             className="w-full bg-gray-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300 ease-in-out"
                             type="reset"
-                            onClick={() => {setName(userData["name"]); setEditMode(false);}}
+                            onClick={() => {setName(userData["name"]); setProfilePic(userData["profilepic"]); setEditMode(false);}}
                             >
                             Cancel
                             </button>
                     </form>
+                    </>
                     : <button
                     className="w-full bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out"
                     onClick={() => setEditMode(true)}
@@ -158,12 +261,66 @@ export default function Account()
             title: 'Security',
             content: (
                 <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto">
-                    <div className="space-y-4">
-                        <p>Coming soon...</p>
+                    <p className="mb-4">Manage your account security settings below:</p>
+
+                    {securityMsg != '' ? <div className="py-4"><strong className="border-l border-gray-700 px-2 py-2 text-center text-sm">{securityMsg}</strong></div> : <></> }
+
+                    <form onSubmit={handlePasswordChange} className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium mb-1" htmlFor="current-password">
+                                Current Password
+                            </label>
+                            <input
+                                type="password"
+                                id="current-password"
+                                value={currentPassword}
+                                onChange={(e) => setCurrentPassword(e.target.value)}
+                                className="w-full p-2 bg-gray-800 border border-gray-700 rounded focus:outline-none focus:ring focus:ring-indigo-500"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1" htmlFor="new-password">
+                                New Password
+                            </label>
+                            <input
+                                type="password"
+                                id="new-password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className="w-full p-2 bg-gray-800 border border-gray-700 rounded focus:outline-none focus:ring focus:ring-indigo-500"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1" htmlFor="confirm-password">
+                                Confirm New Password
+                            </label>
+                            <input
+                                type="password"
+                                id="confirm-password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                className="w-full p-2 bg-gray-800 border border-gray-700 rounded focus:outline-none focus:ring focus:ring-indigo-500"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded"
+                        >
+                            Change Password
+                        </button>
+                    </form>
+                    <div className="mt-6">
+                        <p className="mb-4">
+                            If you need help regarding your account, please contact support.
+                        </p>
                     </div>
                 </div>
             ),
         },
+        
 
         history: {
             title: 'History',
@@ -181,11 +338,111 @@ export default function Account()
             content: (
                 <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto">
                     <div className="space-y-4">
-                        <p>Coming soon...</p>
+                        <p>If you have any issues or feedback, please fill out the form below, and we will address it as soon as possible.</p>
+
+                        {supportMsg != '' ? <div className="py-4"><strong className="border-l border-gray-700 px-2 py-2 text-center text-sm">{supportMsg}</strong></div> : <></> }
+
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+
+                                const formData = new FormData(e.target);
+                                const supportData = {
+                                    name: formData.get('name'),
+                                    email: formData.get('email'),
+                                    issue: formData.get('issue').trim(),
+                                    description: formData.get('description').trim(),
+                                };
+
+                                // Replace with your database submission logic
+                                (sql`INSERT INTO support (email, name, issuetype, description) VALUES (${supportData.email}, ${supportData.email}, ${supportData.issue}, ${supportData.description})`).then(() => {
+                                    if (supportData.issue.toLowerCase() == "bug")
+                                        setSupportMsg("Thank you for your report!\nOur development team will see to it being fixed.");
+                                    else if (supportData.issue.toLowerCase() == "feedback")
+                                        setSupportMsg("Thank you for your feedback!\nWe hope you will continue using our service.");
+                                    else
+                                        setSupportMsg("Your message has been filed.");
+
+                                    issue.value = "";
+                                    description.value = "";
+                                }).catch((err) => {
+                                    setSupportMsg(`An error has occured!\n${JSON.stringify(err)}`);
+                                });
+                            }}
+                            className="space-y-4"
+                        >
+                            <div>
+                                <label className="block text-sm font-medium mb-1" htmlFor="name">
+                                    Name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    className="w-full p-2 rounded bg-gray-800 text-gray-500 border border-gray-700 focus:outline-none focus:border-blue-500"
+                                    value={userData["name"]}
+                                    required
+                                    readOnly={true}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-1" htmlFor="email">
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    className="w-full p-2 rounded bg-gray-800 text-gray-500 border border-gray-700 focus:outline-none focus:border-blue-500"
+                                    value={userData["email"]}
+                                    required
+                                    readOnly={true}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-1" htmlFor="issue">
+                                    Issue Type
+                                </label>
+                                <select
+                                    id="issue"
+                                    name="issue"
+                                    className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-blue-500"
+                                    required
+                                >
+                                    <option value="">Select an issue</option>
+                                    <option value="Bug">Bug</option>
+                                    <option value="Feedback">Feedback</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-1" htmlFor="description">
+                                    Description
+                                </label>
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    rows="4"
+                                    className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-blue-500"
+                                    required
+                                ></textarea>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            >
+                                Submit
+                            </button>
+                        </form>
                     </div>
                 </div>
             ),
         },
+
 
         verify: {
             title: "Verify Identity",
@@ -199,7 +456,7 @@ export default function Account()
                     : (userData["role"] === "Student" ? (
                         <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto space-y-4">
                             <p className="text-gray-400">Upload a picture of your school ID and other relevant document(s):</p>
-                            <UploadFile 
+                            <UploadImageM 
                                 label="School ID & Other Documents" 
                                 onUpload={(dataUrl) => {
                                     setVerificationImages(dataUrl)
@@ -209,7 +466,7 @@ export default function Account()
                     ) : (userData["role"] === "Driver" ? (
                         <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto space-y-4">
                             <p className="text-gray-400">Upload a picture of your driver&apos;s license and other relevant document(s):</p>
-                            <UploadFile 
+                            <UploadImageM 
                                 label="Driver's License & Other Documents" 
                                 onUpload={(dataUrl) => {
                                     setVerificationImages(prev => [...prev, dataUrl])
