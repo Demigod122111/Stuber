@@ -4,7 +4,7 @@ import NavBar from "@/app/components/navbar";
 import { sql } from "@/app/modules/database";
 import { useEffect, useState } from "react";
 import { EnsureAdmin } from "../page";
-import { GetUserData, UpdateGlobalUserData } from "@/app/modules/misc";
+import { customFormatDate, customFormatDateInUTC, GetUserData, UpdateGlobalUserData } from "@/app/modules/misc";
 
 
 export default function Users() {
@@ -93,6 +93,12 @@ export default function Users() {
                                 >
                                     OP Level {getSortIcon("oppermissionlevel")}
                                 </th>
+                                <th
+                                    className="px-6 py-3 text-left text-sm font-medium cursor-pointer"
+                                    onClick={() => sortUsers("created_at")}
+                                >
+                                    Created Timestamp {getSortIcon("created_at")}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -123,12 +129,13 @@ export default function Users() {
                                             : <>{user.oppermissionlevel}</>
                                             }
                                         </td>
+                                        <td className="px-6 py-4 text-sm">{customFormatDateInUTC(new Date(user.created_at))}</td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
                                     <td
-                                        colSpan="6"
+                                        colSpan="7"
                                         className="px-6 py-4 text-center text-sm text-gray-400"
                                     >
                                         No users found.

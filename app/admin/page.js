@@ -57,6 +57,7 @@ const AdminDashboard = () => {
           <SidebarLink href="/admin" label="Overview" sidebarOpen={sidebarOpen} />
           <SidebarLink href="/admin/identity-reviews" label="Identity Reviews" sidebarOpen={sidebarOpen} />
           <SidebarLink href="/admin/users" label="Users" sidebarOpen={sidebarOpen} />
+          <SidebarLink href="/admin/support" label="Support" sidebarOpen={sidebarOpen} />
         </nav>
         <div className="absolute bottom-0 p-4">
           <button

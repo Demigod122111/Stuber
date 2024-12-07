@@ -72,3 +72,29 @@ export const UpdateGlobalUserData = (email, field, data) => {
 
     return updateUserData(email);
 }
+
+export function customFormatDate(date) {
+    const months = [
+        'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+        'September', 'October', 'November', 'December'
+    ];
+
+    const hours = date.getHours() % 12 || 12; // 12-hour format
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+
+    return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()} ${hours}:${minutes} ${ampm}`;
+}
+
+export function customFormatDateInUTC(date) {
+    const months = [
+        'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+        'September', 'October', 'November', 'December'
+    ];
+
+    const hours = date.getUTCHours() % 12 || 12; // 12-hour format, UTC
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0'); // UTC minutes
+    const ampm = date.getUTCHours() >= 12 ? 'PM' : 'AM';
+
+    return `${months[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()} ${hours}:${minutes} ${ampm} UTC`;
+}

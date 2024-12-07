@@ -355,7 +355,7 @@ export default function Account()
                                 };
 
                                 // Replace with your database submission logic
-                                (sql`INSERT INTO support (email, name, issuetype, description) VALUES (${supportData.email}, ${supportData.email}, ${supportData.issue}, ${supportData.description})`).then(() => {
+                                (sql`INSERT INTO support (email, name, issuetype, description) VALUES (${supportData.email}, ${supportData.name}, ${supportData.issue}, ${supportData.description})`).then(() => {
                                     if (supportData.issue.toLowerCase() == "bug")
                                         setSupportMsg("Thank you for your report!\nOur development team will see to it being fixed.");
                                     else if (supportData.issue.toLowerCase() == "feedback")

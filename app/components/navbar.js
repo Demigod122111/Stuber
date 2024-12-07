@@ -25,8 +25,8 @@ export default function NavBar() {
     }
 
     const navLinks = [
-        { href: "/account", label: "Account" },
         { href: "/admin", label: "Admin", show: () => Number(userData["oppermissionlevel"]) >= 4 },
+        { href: "/account", label: "Account" },
     ];
 
     return (
