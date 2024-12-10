@@ -31,7 +31,7 @@ export default function Support()
 
     useEffect(() => {
         RetrieveSupports();
-    }); // Testing Dynamic
+    }, []);
 
 
     return (

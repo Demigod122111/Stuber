@@ -42,7 +42,7 @@ export default function IReviews()
     useEffect(() => {
         EnsureAdmin(4);
         (sql`SELECT * FROM users WHERE identityverified='in progress'`).then((res) => setAwaitingReview(res));
-    }) // Testing Dynamic
+    }, [])
 
     const handleApproval = (email) => {
         sql`UPDATE users SET identityverified='verified' WHERE email=${email}`

@@ -22,7 +22,7 @@ export default function Users() {
 
     useEffect(() => {
         RetrieveUsers();
-    }); // Testing Dynamic
+    }, []);
 
     const sortUsers = (key) => {
         let direction = "asc";

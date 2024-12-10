@@ -37,8 +37,8 @@ const AdminDashboard = () => {
     (sql`SELECT count(*) AS total FROM rides WHERE status='waiting'`).then((res) => setPendingRequests(res[0]["total"]));
     (sql`SELECT name, email, rating, timesrated FROM users WHERE role='Driver' ORDER BY CASE WHEN "timesrated" = 0 THEN rating ELSE rating / "timesrated" END DESC LIMIT 3`).then((res) => {
         setTopDrivers(res);
-    }); // Testing Dynamic
-  })
+    });
+  }, [])
 
   return (
     <div className="flex h-screen bg-gray-100">
