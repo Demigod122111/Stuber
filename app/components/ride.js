@@ -322,7 +322,7 @@ export default function RideForm() {
             return (<>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 w-full">
                 {rides.map((ride) => 
-                    <div className="border-t border-b border-gray-700 shadow-md rounded-lg px-4 py-2 flex flex-col gap-4">
+                    <div className="border-t border-b border-gray-700 shadow-md rounded-lg px-4 py-2 flex flex-col gap-4" key={ride.id}>
                         <h2 className="text-lg font-semibold w-full overflow-auto text-blue-500 text-center border-l border-r border-b border-gray-700">{ride.name}</h2>
                         <p className="text-gray-600 w-full overflow-auto">
                             {ride.studentemail}
