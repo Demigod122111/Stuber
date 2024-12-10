@@ -47,7 +47,7 @@ export default function HomePage() {
                             title="Book a Ride"
                             description="Effortlessly book rides to your destination."
                             icon="🚗"
-                            link="#ride"
+                            link="/ride"
                         />
                         <FeatureCard
                             title="Manage Account"

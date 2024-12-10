@@ -11,6 +11,15 @@ import { sql } from "../modules/database";
 import { decryptPassword, encryptPassword } from "../modules/security";
 import { FullScreenImageViewer } from "../admin/identity-reviews/page";
 
+export const IsVerified = async () => {
+    var vstatus = "";
+    const SetVStatus = (value) => vstatus = value;
+
+    await GetUserData((val) => {}, {"identityverified": SetVStatus});
+
+    return vstatus == "verified";
+}
+
 const savedSection = () => {
     const sec = sessionStorage.getItem("account-section");
     if (sec == undefined || sec == null) 

@@ -26,11 +26,15 @@ const AdminDashboard = () => {
 
   const [totalUsers, setTotalUsers] = useState("N/A"); 
   const [totalDrivers, setTotalDrivers] = useState("N/A"); 
+  const [completedRides, setCompletedRides] = useState("N/A"); 
+  const [pendingRequests, setPendingRequests] = useState("N/A"); 
   const [topDrivers, setTopDrivers] = useState([]); 
 
   useEffect(() => {
     (sql`SELECT count(*) AS total FROM users`).then((res) => setTotalUsers(res[0]["total"]));
     (sql`SELECT count(*) AS total FROM users WHERE role='Driver'`).then((res) => setTotalDrivers(res[0]["total"]));
+    (sql`SELECT count(*) AS total FROM rides WHERE status='completed'`).then((res) => setCompletedRides(res[0]["total"]));
+    (sql`SELECT count(*) AS total FROM rides WHERE status='waiting'`).then((res) => setPendingRequests(res[0]["total"]));
     (sql`SELECT name, email, rating, timesrated FROM users WHERE role='Driver' ORDER BY CASE WHEN "timesrated" = 0 THEN rating ELSE rating / "timesrated" END DESC LIMIT 3`).then((res) => {
         setTopDrivers(res);
     });
@@ -70,7 +74,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-x-hidden w-screen">
+      <div className="flex-1 flex flex-col overflow-x-hidden w-screen bg-gray-800">
         {/* Topbar */}
         <div className="flex justify-between items-center p-4 bg-gray-900 text-white shadow-lg w-full">
           <h2 className="text-xl font-semibold">{sidebarOpen ? "" : "Dashboard"}</h2>
@@ -83,8 +87,8 @@ const AdminDashboard = () => {
         <div className="p-6 flex flex-wrap gap-4 h-screen w-full">
           <StatsCard title="Total Users" value={totalUsers} />
           <StatsCard title="Total Drivers" value={totalDrivers} />
-          <StatsCard title="Completed Rides" value="N/A" />
-          <StatsCard title="Pending Requests" value="N/A" />
+          <StatsCard title="Completed Rides" value={completedRides} />
+          <StatsCard title="Pending Requests" value={pendingRequests} />
 
           {/* Additional Sections */}
           <RecentActivities />
@@ -102,14 +106,14 @@ const SidebarLink = ({ href, label, sidebarOpen }) => (
 );
 
 const StatsCard = ({ title, value }) => (
-  <div className="bg-white rounded-lg shadow-lg p-6 w-64 overflow-x-auto">
-    <h3 className="text-gray-700 font-semibold text-lg">{title}</h3>
-    <p className="text-2xl font-bold text-gray-900 mt-2">{value}</p>
+  <div className="bg-gray-900 rounded-lg shadow-lg p-6 w-64 overflow-x-auto">
+    <h3 className="text-gray-500 font-semibold text-lg">{title}</h3>
+    <p className="text-2xl font-bold text-gray-300 mt-2">{value}</p>
   </div>
 );
 
 const RecentActivities = () => (
-  <div className="bg-white rounded-lg shadow-lg p-6 w-full overflow-x-auto">
+  <div className="bg-gray-900 rounded-lg shadow-lg p-6 w-full overflow-x-auto">
     <h3 className="text-lg font-semibold text-gray-700">Recent Activities</h3>
     <ul className="mt-4 space-y-2">
         {/*
@@ -123,16 +127,16 @@ const RecentActivities = () => (
 
 function TopDrivers({topDrivers}) 
 {
-    return <div className="bg-white rounded-lg shadow-lg p-6 w-full overflow-x-auto">
+    return <div className="bg-gray-900 rounded-lg shadow-lg p-6 w-full overflow-x-auto">
         <h3 className="text-lg font-semibold text-gray-700">Top Drivers</h3>
         <div className="mt-4 space-y-2">
         {
             topDrivers.map((driver) =>
                 <div className="flex justify-between" key={driver["email"]}>
-                    <p className="text-gray-600">{driver["name"]} ({driver["email"]})</p>
+                    <p className="text-gray-500">{driver["name"]} ({driver["email"]})</p>
                     <div className="flex justify-evenly gap-4">
-                        <p className="text-gray-900 font-bold">{Number(driver["timesrated"]) == 0 ? driver["rating"].toFixed(1) : (Number(driver["rating"]) / Number(driver["timesrated"])).toFixed(1)}/5.0</p>
-                        <p className="text-gray-600 font-semibold">[{driver["timesrated"]}]</p>
+                        <p className="text-gray-300 font-bold">{Number(driver["timesrated"]) == 0 ? driver["rating"].toFixed(1) : (Number(driver["rating"]) / Number(driver["timesrated"])).toFixed(1)}/5.0</p>
+                        <p className="text-gray-300 font-semibold">[{driver["timesrated"]}]</p>
                     </div>
                 </div>
             )
