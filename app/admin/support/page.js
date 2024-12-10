@@ -58,10 +58,10 @@ export default function Support()
                                                 key={index}
                                                 className="border-t border-gray-700 hover:bg-gray-600"
                                             >
-                                                <td className="px-4 py-2">{ticket.email}</td>
-                                                <td className="px-4 py-2">{ticket.name}</td>
+                                                <td className="px-4 py-2 min-w-[fit-content]">{ticket.email}</td>
+                                                <td className="px-4 py-2 min-w-[fit-content]">{ticket.name}</td>
                                                 <td className="px-4 py-2">{ticket.description}</td>
-                                                <td className="px-4 py-2">{customFormatDateInUTC(ticket.created_at)}</td>
+                                                <td className="px-4 py-2 min-w-[fit-content]">{customFormatDateInUTC(ticket.created_at)}</td>
                                                 <td className="px-4 py-2">
                                                     <button
                                                     className="w-full bg-gray-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300 ease-in-out"
