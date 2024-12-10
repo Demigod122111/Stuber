@@ -52,6 +52,7 @@ export default function RideForm() {
     useEffect(() => {
         if (userData["currentride"] != -1)
         sql`SELECT r.*, u.name, d.name AS dname, d.phonenumber AS dphonenumber FROM rides r JOIN users u ON r.studentemail = u.email LEFT JOIN users d ON r.driveremail = d.email AND r.driveremail IS NOT NULL AND r.driveremail <> '' WHERE r.id=${userData["currentride"]}`.then((res) => setCurrentRide(res[0]))
+        else setCurrentRide({});
     }); // Testing Dynamic
 
     const cancelRide = () => {
