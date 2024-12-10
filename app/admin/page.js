@@ -151,7 +151,7 @@ export default function Admin()
 
     useEffect(() => {
         GetUserData(setUserData);
-    }); // Testing Dynamic
+    }, []);
 
     if (userData["oppermissionlevel"] == undefined)
     {

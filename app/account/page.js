@@ -55,7 +55,7 @@ export default function Account()
         GetUserData(setUserData, {"name": setName, "emailnotifications": setEmailNotifications, "profilepic": setProfilePic});
         
         setSelectedSection(savedSection());
-    }); // Testing Dynamic
+    }, []);
 
     useEffect(() => {
         if (supportMsg == "") return;

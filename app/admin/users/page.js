@@ -17,8 +17,11 @@ export default function Users() {
     }
     useEffect(() => {
         EnsureAdmin(4);
-        RetrieveUsers();
         GetUserData(setUserData);
+    }, []);
+
+    useEffect(() => {
+        RetrieveUsers();
     }); // Testing Dynamic
 
     const sortUsers = (key) => {

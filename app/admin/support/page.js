@@ -26,8 +26,11 @@ export default function Support()
     }
     useEffect(() => {
         EnsureAdmin(4);
-        RetrieveSupports();
         GetUserData(setUserData);
+    }, []);
+
+    useEffect(() => {
+        RetrieveSupports();
     }); // Testing Dynamic
 
 

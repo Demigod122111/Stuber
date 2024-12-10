@@ -30,15 +30,28 @@ export default function RideForm() {
 
     const [userData, setUserData] = useState({});
     const [role, setRole] = useState('');
+
+    const [canCreateRequest, setCanCreateRequest] = useState(true);
     
     const getCurrentRide = (id) => {
         if (id == -1) return;
-        sql`SELECT r.*, u.name, d.name AS dname, d.phonenumber AS dphonenumber FROM rides r JOIN users u ON r.studentemail = u.email LEFT JOIN users d ON r.driveremail = d.email AND r.driveremail IS NOT NULL AND r.driveremail <> '' WHERE r.id=${id}`.then((res) => setCurrentRide(res[0]));
+        sql`SELECT r.*, u.name, d.name AS dname, d.phonenumber AS dphonenumber FROM rides r JOIN users u ON r.studentemail = u.email LEFT JOIN users d ON r.driveremail = d.email AND r.driveremail IS NOT NULL AND r.driveremail <> '' WHERE r.id=${id}`.then((res) => {
+            setCurrentRide(res[0]);
+            setCanCreateRequest(true);
+        });
     }
 
     useEffect(() => {
         GetUserData(setUserData, { "role": setRole, "currentride": getCurrentRide });
+    }, []);
+
+    useEffect(() => {
         sql`SELECT r.*, u.name FROM rides r JOIN users u ON r.studentemail = u.email WHERE r.status=${"waiting"}`.then(res => setRides(res));
+    }); // Testing Dynamic
+
+    useEffect(() => {
+        if (userData["currentride"] != -1)
+        sql`SELECT r.*, u.name, d.name AS dname, d.phonenumber AS dphonenumber FROM rides r JOIN users u ON r.studentemail = u.email LEFT JOIN users d ON r.driveremail = d.email AND r.driveremail IS NOT NULL AND r.driveremail <> '' WHERE r.id=${userData["currentride"]}`.then((res) => setCurrentRide(res[0]))
     }); // Testing Dynamic
 
     const cancelRide = () => {
@@ -55,6 +68,8 @@ export default function RideForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!canCreateRequest || (userData["currentride"] && userData["currentride"] != -1)) return;
+        setCanCreateRequest(false);
         const res = await sql`INSERT INTO rides (studentemail, pickupstreet, pickupparish, dropoffstreet, dropoffparish, routespecs) VALUES (${userData["email"]}, ${pickup.street}, ${pickup.parish}, ${dropoff.street}, ${dropoff.parish}, ${routeSpecification}) RETURNING *`;
         setCurrentRide(res[0]);
         const id = res[0]["id"];
@@ -319,7 +334,7 @@ export default function RideForm() {
                 </div>);
             }
 
-            return (<>  ........./ 
+            return (<>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 w-full">
                 {rides.map((ride) => 
                     <div className="border-t border-b border-gray-700 shadow-md rounded-lg px-4 py-2 flex flex-col gap-4" key={ride.id}>
@@ -370,6 +385,17 @@ export default function RideForm() {
         }
         else
         {
+            if (!currentRide)
+            {
+                return (<>
+                    <div className="text-white p-6 rounded-lg shadow-lg max-w mx-auto flex justify-center">
+                        <div className="space-y-4">
+                            <p className="text-lg text-blue-400">Searching for your ride...</p>
+                        </div>
+                    </div>
+                </>);
+            }
+
             return <div className="w-full flex justify-center">
                 <div className="border-t border-b border-gray-700 shadow-md rounded-lg px-4 py-2 flex flex-col gap-4">
                     <h2 className="text-lg font-semibold w-full overflow-auto text-blue-500 text-center border-l border-r border-b border-gray-700">{currentRide.name}</h2>
@@ -407,7 +433,7 @@ export default function RideForm() {
                     <button className="mt-auto px-4 py-2 border-t border-l border-r border-gray-700 text-white hover:rounded hover:bg-blue-600 transition" onClick={() => {
                         sql`UPDATE rides SET status=${"completed"} WHERE id=${currentRide.id}`;                        
                         sql`UPDATE users SET currentride=${-1} WHERE email=${userData["email"]} OR email=${currentRide.studentemail}`.then(() => setUserData({ ...userData, "currentride": -1 }));
-                        setRides(prev => prev.filter(ride => ride.id != currentRide.id))
+                        setRides(prev => prev.filter(ride => ride.id != currentRide.id));
                     }}>
                         Mark as Completed
                     </button>
