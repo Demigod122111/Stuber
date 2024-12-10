@@ -18,7 +18,7 @@ export default function NavBar() {
     useEffect(() => {
         EnsureLogin();
         GetUserData(setUserData);
-    }, []);
+    }); // Testing Dynamic
 
     const CanShowLink = (link) => {
         return link.show == undefined || link.show();

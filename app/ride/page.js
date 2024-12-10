@@ -17,7 +17,7 @@ export default function Ride()
         }
 
         GetVerified();
-    }, []);
+    }); // Testing Dynamic
 
     if (verified == undefined)
     {

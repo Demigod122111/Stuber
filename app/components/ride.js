@@ -39,7 +39,7 @@ export default function RideForm() {
     useEffect(() => {
         GetUserData(setUserData, { "role": setRole, "currentride": getCurrentRide });
         sql`SELECT r.*, u.name FROM rides r JOIN users u ON r.studentemail = u.email WHERE r.status=${"waiting"}`.then(res => setRides(res));
-    }, []);
+    }); // Testing Dynamic
 
     const cancelRide = () => {
         sql`UPDATE rides SET status=${"cancelled"} WHERE id=${currentRide["id"]}`
@@ -319,7 +319,7 @@ export default function RideForm() {
                 </div>);
             }
 
-            return (<>
+            return (<>  ........./ 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 w-full">
                 {rides.map((ride) => 
                     <div className="border-t border-b border-gray-700 shadow-md rounded-lg px-4 py-2 flex flex-col gap-4" key={ride.id}>

@@ -19,7 +19,7 @@ export default function Users() {
         EnsureAdmin(4);
         RetrieveUsers();
         GetUserData(setUserData);
-    }, []);
+    }); // Testing Dynamic
 
     const sortUsers = (key) => {
         let direction = "asc";

@@ -28,7 +28,7 @@ export default function Support()
         EnsureAdmin(4);
         RetrieveSupports();
         GetUserData(setUserData);
-    }, []);
+    }); // Testing Dynamic
 
 
     return (
