@@ -19,7 +19,7 @@ const parishOptions = [
     "St. Thomas",
 ];
 
-export default function RideForm() {
+export default function RideForm( {openDriverRating} ) {
     const [pickup, setPickup] = useState({ street: '', parish: '' });
     const [dropoff, setDropoff] = useState({ street: '', parish: '' });
     const [routeSpecification, setRouteSpecification] = useState('');
@@ -295,7 +295,8 @@ export default function RideForm() {
                                 type="button"
                                 className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 onClick={() => {
-                                    sql`UPDATE rides SET status=${"completed"} WHERE id=${currentRide.id}`;                        
+                                    sql`UPDATE rides SET status=${"completed"} WHERE id=${currentRide.id}`;
+                                    openDriverRating(currentRide.driveremail);                      
                                     sql`UPDATE users SET currentride=${-1} WHERE email=${userData["email"]} OR email=${currentRide.driveremail}`.then(() => setUserData({ ...userData, "currentride": -1 }));
                                 }}
                             >
@@ -322,8 +323,8 @@ export default function RideForm() {
             return (<>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 w-full">
                 {rides.map((ride) => 
-                    <div className="border-t border-b border-gray-700 shadow-md rounded-lg px-4 py-2 flex flex-col gap-4" key={ride.id}>
-                        <h2 className="text-lg font-semibold w-full overflow-auto text-blue-500 text-center border-l border-r border-b border-gray-700">{ride.name}</h2>
+                    <div className="border-t border-b border-gray-700 shadow-md rounded-lg px-4 py-2 flex flex-col gap-4 bg-gray-800" key={ride.id}>
+                        <h2 className="text-lg font-semibold w-full overflow-auto text-white text-center border-l border-r border-b border-gray-700">{ride.name}</h2>
                         <p className="text-gray-600 w-full overflow-auto">
                             {ride.studentemail}
                         </p>
