@@ -17,8 +17,13 @@ export default function Users() {
     }
     useEffect(() => {
         EnsureAdmin(4);
-        RetrieveUsers();
         GetUserData(setUserData);
+    }, []);
+
+    useEffect(() => {
+        setInterval(() => {
+            RetrieveUsers();
+        }, 30000);
     }, []);
 
     const sortUsers = (key) => {

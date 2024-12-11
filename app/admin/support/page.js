@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 import { EnsureAdmin } from "../page";
 import NavBar from "@/app/components/navbar";
 
-
-
 export default function Support()
 {
     const [userData, setUserData] = useState({});
@@ -26,8 +24,13 @@ export default function Support()
     }
     useEffect(() => {
         EnsureAdmin(4);
-        RetrieveSupports();
         GetUserData(setUserData);
+    }, []);
+
+    useEffect(() => {
+        setInterval(() => {
+            RetrieveSupports();
+        }, 60000);
     }, []);
 
 

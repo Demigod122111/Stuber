@@ -16,7 +16,10 @@ export default function NavBar() {
     const [userData, setUserData] = useState({});
 
     useEffect(() => {
-        EnsureLogin();
+        setInterval(() => {
+            EnsureLogin();
+        }, 60000);
+
         GetUserData(setUserData);
     }, []);
 
