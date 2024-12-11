@@ -21,7 +21,9 @@ export default function Users() {
     }, []);
 
     useEffect(() => {
-        RetrieveUsers();
+        setInterval(() => {
+            RetrieveUsers();
+        }, 30000);
     }, []);
 
     const sortUsers = (key) => {

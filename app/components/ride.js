@@ -32,6 +32,19 @@ export default function RideForm() {
     const [role, setRole] = useState('');
 
     const [canCreateRequest, setCanCreateRequest] = useState(true);
+
+    const [updates, setUpdates] = useState({})
+
+    const changeUpdate = (key, value, immediate) => {
+        setTimeout(() => {
+            setUpdates(prev => setUpdates({ ...prev, [key]: value }));
+        }, immediate ? 0 : 5000);
+    }
+    const canUpdate = (key) => {
+        if (updates == undefined || updates == null) setUpdates({});
+
+        return updates == undefined || updates == null || updates[key] == undefined || updates[key] == null || updates[key];
+    }
     
     const getCurrentRide = (id) => {
         if (id == -1) return;
@@ -46,13 +59,33 @@ export default function RideForm() {
     }, []);
 
     useEffect(() => {
-        sql`SELECT r.*, u.name FROM rides r JOIN users u ON r.studentemail = u.email WHERE r.status=${"waiting"}`.then(res => setRides(res));
+        setInterval(() => {
+            if (canUpdate("requests"))
+            {
+                changeUpdate("requests", false, true);
+                sql`SELECT r.*, u.name FROM rides r JOIN users u ON r.studentemail = u.email WHERE r.status=${"waiting"}`.then(res => {
+                    setRides(res);
+                    changeUpdate("requests", true, false);
+                });
+            }
+        }, 5000)
     }, []);
 
     useEffect(() => {
-        if (userData["currentride"] != -1)
-        sql`SELECT r.*, u.name, d.name AS dname, d.phonenumber AS dphonenumber FROM rides r JOIN users u ON r.studentemail = u.email LEFT JOIN users d ON r.driveremail = d.email AND r.driveremail IS NOT NULL AND r.driveremail <> '' WHERE r.id=${userData["currentride"]}`.then((res) => setCurrentRide(res[0]))
-        else setCurrentRide({});
+        setInterval(() => {
+            if (canUpdate("currentride"))
+            {
+                if (userData["currentride"] != -1)
+                {
+                    changeUpdate("currentride", false, true);
+                    sql`SELECT r.*, u.name, d.name AS dname, d.phonenumber AS dphonenumber FROM rides r JOIN users u ON r.studentemail = u.email LEFT JOIN users d ON r.driveremail = d.email AND r.driveremail IS NOT NULL AND r.driveremail <> '' WHERE r.id=${userData["currentride"]}`.then((res) => {
+                        setCurrentRide(res[0]); 
+                        changeUpdate("currentride", true, false);
+                    });
+                }
+                else setCurrentRide({});
+            }
+        }, 5000)
     }, []);
 
     const cancelRide = () => {

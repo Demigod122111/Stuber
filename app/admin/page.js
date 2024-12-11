@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { useState } from "react";
-import { EnsureLogin, Logout } from "../auth/page";
+import { Logout } from "../auth/page";
 import { GetUserData } from "../modules/misc";
 import NavBar from "../components/navbar";
 import { sql } from "../modules/database";
@@ -31,13 +31,15 @@ const AdminDashboard = () => {
   const [topDrivers, setTopDrivers] = useState([]); 
 
   useEffect(() => {
-    (sql`SELECT count(*) AS total FROM users`).then((res) => setTotalUsers(res[0]["total"]));
-    (sql`SELECT count(*) AS total FROM users WHERE role='Driver'`).then((res) => setTotalDrivers(res[0]["total"]));
-    (sql`SELECT count(*) AS total FROM rides WHERE status='completed'`).then((res) => setCompletedRides(res[0]["total"]));
-    (sql`SELECT count(*) AS total FROM rides WHERE status='waiting'`).then((res) => setPendingRequests(res[0]["total"]));
-    (sql`SELECT name, email, rating, timesrated FROM users WHERE role='Driver' ORDER BY CASE WHEN "timesrated" = 0 THEN rating ELSE rating / "timesrated" END DESC LIMIT 3`).then((res) => {
-        setTopDrivers(res);
-    });
+    setInterval(() => {
+      (sql`SELECT count(*) AS total FROM users`).then((res) => setTotalUsers(res[0]["total"]));
+      (sql`SELECT count(*) AS total FROM users WHERE role='Driver'`).then((res) => setTotalDrivers(res[0]["total"]));
+      (sql`SELECT count(*) AS total FROM rides WHERE status='completed'`).then((res) => setCompletedRides(res[0]["total"]));
+      (sql`SELECT count(*) AS total FROM rides WHERE status='waiting'`).then((res) => setPendingRequests(res[0]["total"]));
+      (sql`SELECT name, email, rating, timesrated FROM users WHERE role='Driver' ORDER BY CASE WHEN "timesrated" = 0 THEN rating ELSE rating / "timesrated" END DESC LIMIT 3`).then((res) => {
+          setTopDrivers(res);
+      });
+    }, 10000)
   }, [])
 
   return (

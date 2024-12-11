@@ -41,7 +41,10 @@ export default function IReviews()
 
     useEffect(() => {
         EnsureAdmin(4);
-        (sql`SELECT * FROM users WHERE identityverified='in progress'`).then((res) => setAwaitingReview(res));
+
+        setInterval(() => {
+            (sql`SELECT * FROM users WHERE identityverified='in progress'`).then((res) => setAwaitingReview(res));
+        }, 300000)
     }, [])
 
     const handleApproval = (email) => {
