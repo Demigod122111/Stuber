@@ -50,6 +50,8 @@ export const GetUserData = (setUserData, setters) => {
                 setters[key](data[0][key]);
             });
         }
+
+        return data[0];
     }
 
     return getUserData(localStorage.getItem("cuser"), localStorage.getItem("csession"));

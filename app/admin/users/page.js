@@ -9,7 +9,7 @@ import { customFormatDate, customFormatDateInUTC, GetUserData, UpdateGlobalUserD
 
 export default function Users() {
     const [userData, setUserData] = useState({});
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState(undefined);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
     const RetrieveUsers = () => {
@@ -107,7 +107,7 @@ export default function Users() {
                             </tr>
                         </thead>
                         <tbody>
-                            {users.length > 0 ? (
+                            {users != undefined && users.length > 0 ? (
                                 users.map((user, index) => (
                                     <tr
                                         key={user.email}
@@ -137,8 +137,16 @@ export default function Users() {
                                         <td className="px-6 py-4 text-sm">{customFormatDateInUTC(new Date(user.created_at))}</td>
                                     </tr>
                                 ))
-                            ) : (
-                                <tr>
+                            ) : (users == undefined
+                                ? <tr>
+                                    <td
+                                        colSpan="7"
+                                        className="px-6 py-4 text-center text-sm text-gray-400"
+                                    >
+                                        Loading Users...
+                                    </td>
+                                </tr>
+                                : <tr>
                                     <td
                                         colSpan="7"
                                         className="px-6 py-4 text-center text-sm text-gray-400"

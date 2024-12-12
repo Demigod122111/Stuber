@@ -50,7 +50,7 @@ export default function NavBar() {
                     {/* Navigation Links for Desktop */}
                     <div className="hidden md:flex space-x-8 items-center text-lg" key="desktop">
                         {navLinks.map((link) => (
-                            CanShowLink(link) ?
+                            CanShowLink(link) &&
                             <Link
                                 key={link.href}
                                 href={link.href}
@@ -58,7 +58,6 @@ export default function NavBar() {
                             >
                                 {link.label}
                             </Link>
-                            : <></>
                         ))}
                     </div>
     
@@ -103,7 +102,7 @@ export default function NavBar() {
                 <div className="md:hidden bg-gray-800 text-lg">
                     <div className="space-y-2 px-4 py-4">
                         {navLinks.map((link) => (
-                            CanShowLink(link) ?
+                            CanShowLink(link) &&
                             <Link
                                 key={link.href}
                                 href={link.href}
@@ -112,7 +111,6 @@ export default function NavBar() {
                             >
                                 {link.label}
                             </Link>
-                            : <></>
                         ))}
                     </div>
                 </div>

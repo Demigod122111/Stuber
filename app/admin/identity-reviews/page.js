@@ -36,7 +36,7 @@ export function FullScreenImageViewer({ imageUrl, onClose }) {
 
 export default function IReviews()
 {
-    const [awaitingReview, setAwaitingReview] = useState([]); 
+    const [awaitingReview, setAwaitingReview] = useState(undefined); 
     const [viewing, setViewing] = useState("");
 
     useEffect(() => {
@@ -68,8 +68,10 @@ export default function IReviews()
             <NavBar />
 
             <div className="mx-auto p-4">
-                {awaitingReview.length === 0 ? (
-                    <p className="text-center text-gray-500 text-lg">No users awaiting review.</p>
+                {awaitingReview == undefined || awaitingReview.length === 0 ? (
+                    awaitingReview == undefined 
+                    ? <p className="text-center text-gray-500 text-lg">Loading Identity Reviews...</p>
+                    : <p className="text-center text-gray-500 text-lg">No users awaiting review.</p>
                 ) : (
                     awaitingReview.map((user) => (
                         <div

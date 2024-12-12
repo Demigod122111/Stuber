@@ -9,7 +9,7 @@ import NavBar from "@/app/components/navbar";
 export default function Support()
 {
     const [userData, setUserData] = useState({});
-    const [supports, setSupports] = useState({});
+    const [supports, setSupports] = useState(undefined);
 
     const RetrieveSupports = () => {
         (sql`SELECT * FROM support ORDER BY created_at ASC`).then((res) => {
@@ -38,7 +38,7 @@ export default function Support()
         <>
             <NavBar />
             <div className="p-6 bg-gray-900 text-white min-h-screen">
-                {Object.keys(supports).length > 0 ? (
+                {supports != undefined && Object.keys(supports).length > 0 ? (
                     Object.keys(supports).map((issuetype) => (
                         <div key={issuetype} className="mb-8">
                             <h2 className="text-xl font-semibold mb-4">
@@ -95,8 +95,13 @@ export default function Support()
                             </div>
                         </div>
                     ))
-                ) : (
-                    <div className="text-center mt-12">
+                ) : (supports == undefined
+                    ? <div className="text-center mt-12">
+                        <p className="text-2xl font-semibold text-gray-300">
+                            Loading Support Tickets...
+                        </p>
+                    </div>
+                    : <div className="text-center mt-12">
                         <p className="text-2xl font-semibold text-gray-300">
                             No support tickets available.
                         </p>

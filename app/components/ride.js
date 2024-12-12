@@ -46,46 +46,46 @@ export default function RideForm( {openDriverRating} ) {
         return updates == undefined || updates == null || updates[key] == undefined || updates[key] == null || updates[key];
     }
     
-    const getCurrentRide = (id) => {
+    const getCurrentRide = (id, then) => {
         if (id == -1) return;
         sql`SELECT r.*, u.name, d.name AS dname, d.phonenumber AS dphonenumber FROM rides r JOIN users u ON r.studentemail = u.email LEFT JOIN users d ON r.driveremail = d.email AND r.driveremail IS NOT NULL AND r.driveremail <> '' WHERE r.id=${id}`.then((res) => {
             setCurrentRide(res[0]);
             setCanCreateRequest(true);
+
+            if (then) then();
         });
     }
 
     useEffect(() => {
-        GetUserData(setUserData, { "role": setRole, "currentride": getCurrentRide });
-    }, []);
+        GetUserData(setUserData, { "role": setRole });
+    }, [userData]);
 
     useEffect(() => {
-        setInterval(() => {
-            if (canUpdate("requests"))
-            {
-                changeUpdate("requests", false, true);
-                sql`SELECT r.*, u.name FROM rides r JOIN users u ON r.studentemail = u.email WHERE r.status=${"waiting"}`.then(res => {
-                    setRides(res);
-                    changeUpdate("requests", true, false);
-                });
-            }
-        }, 5000)
-    }, []);
-
-    useEffect(() => {
-        setInterval(() => {
-            if (canUpdate("currentride"))
-            {
-                if (userData["currentride"] != -1)
+        GetUserData(setUserData, { "role": setRole }).then((user) => {            
+            setInterval(() => {
+                if (canUpdate("requests"))
                 {
-                    changeUpdate("currentride", false, true);
-                    sql`SELECT r.*, u.name, d.name AS dname, d.phonenumber AS dphonenumber FROM rides r JOIN users u ON r.studentemail = u.email LEFT JOIN users d ON r.driveremail = d.email AND r.driveremail IS NOT NULL AND r.driveremail <> '' WHERE r.id=${userData["currentride"]}`.then((res) => {
-                        setCurrentRide(res[0]); 
-                        changeUpdate("currentride", true, false);
+                    changeUpdate("requests", false, true);
+                    sql`SELECT r.*, u.name FROM rides r JOIN users u ON r.studentemail = u.email WHERE r.status=${"waiting"}`.then(res => {
+                        setRides(res);
+                        changeUpdate("requests", true, false);
                     });
                 }
-                else setCurrentRide({});
-            }
-        }, 5000)
+    
+                if (canUpdate("currentride"))
+                {
+                    sql`SELECT currentride FROM users WHERE id=${user.id}`.then(res => {
+                        if (res[0]["currentride"] != -1)
+                        {
+                            getCurrentRide(res[0]["currentride"], () => { changeUpdate("currentride", true, false); });
+                        }
+                        else setCurrentRide({});
+
+                        changeUpdate("currentride", false, true);
+                    })
+                }
+            }, 5000)
+        })
     }, []);
 
     const cancelRide = () => {
@@ -110,6 +110,8 @@ export default function RideForm( {openDriverRating} ) {
         sql`UPDATE users SET currentride=${id} WHERE email=${userData["email"]}`
         setUserData({ ...userData, "currentride": id });
         getCurrentRide(id);
+
+        resetForm();
     };
 
     if (role == '')
@@ -372,7 +374,7 @@ export default function RideForm( {openDriverRating} ) {
             return (<>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 w-full">
                 {rides.map((ride) => 
-                    <div className="border-t border-b border-gray-700 shadow-md rounded-lg px-4 py-2 flex flex-col gap-4 bg-gray-800" key={ride.id}>
+                    <div className="border-t border-b border-gray-700 shadow-md rounded-lg px-4 py-2 flex flex-col gap-4" key={ride.id}>
                         <h2 className="text-lg font-semibold w-full overflow-auto text-white text-center border-l border-r border-b border-gray-700">{ride.name}</h2>
                         <p className="text-gray-600 w-full overflow-auto">
                             {ride.studentemail}
@@ -467,7 +469,7 @@ export default function RideForm( {openDriverRating} ) {
                     </div>
                     <button className="mt-auto px-4 py-2 border-t border-l border-r border-gray-700 text-white hover:rounded hover:bg-blue-600 transition" onClick={() => {
                         sql`UPDATE rides SET status=${"completed"} WHERE id=${currentRide.id}`;                        
-                        sql`UPDATE users SET currentride=${-1} WHERE email=${userData["email"]} OR email=${currentRide.studentemail}`.then(() => setUserData({ ...userData, "currentride": -1 }));
+                        sql`UPDATE users SET currentride=${-1} WHERE email=${userData["email"]}`.then(() => setUserData({ ...userData, "currentride": -1 }));
                         setRides(prev => prev.filter(ride => ride.id != currentRide.id));
                     }}>
                         Mark as Completed
