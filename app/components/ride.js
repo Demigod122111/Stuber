@@ -97,6 +97,7 @@ export default function RideForm({ openDriverRating }) {
         sql`UPDATE users SET currentride=${-1} WHERE email=${userData["email"]}`
         setUserData({ ...userData, "currentride": -1 });
         setCurrentRide({});
+        changeUpdate("currentride", false, true);
         setCanCreateRequest(true);
     }
 
