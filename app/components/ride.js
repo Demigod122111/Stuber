@@ -53,7 +53,9 @@ export default function RideForm({ openDriverRating }) {
         sql`SELECT r.*, u.name, d.name AS dname, d.phonenumber AS dphonenumber FROM rides r JOIN users u ON r.studentemail = u.email LEFT JOIN users d ON r.driveremail = d.email AND r.driveremail IS NOT NULL AND r.driveremail <> '' WHERE r.id=${id}`.then((res) => {
             if (updateDriverOnly == true) setCurrentRide((prev) => { return { ...prev, "dname": res[0]["dname"], "dphonenumber": res[0]["dphonenumber"] }});
             else setCurrentRide(res[0]);
-            setCanCreateRequest(true);
+
+            if (currentRide && currentRide["studentemail"])
+                setCanCreateRequest(true);
 
             if (then) then();
         });
@@ -223,13 +225,15 @@ export default function RideForm({ openDriverRating }) {
                             >
                                 Reset
                             </button>
-                            
+                            {
+                                canCreateRequest &&
                             <button
                                 type="submit"
                                 className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             >
                                 Submit
                             </button>
+                            }
                         </div>
                     </form>
                 </div>
