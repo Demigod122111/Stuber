@@ -80,7 +80,7 @@ export default function RideForm( {openDriverRating} ) {
                     sql`SELECT currentride FROM users WHERE id=${user.id}`.then(res => {
                         if (res[0]["currentride"] != -1 && (currentRide == undefined || currentRide == {} || currentRide.length == 0 || !currentRide.studentemail))
                         {
-                            getCurrentRide(res[0]["currentride"], currentRide == undefined ? false : (user.role == "Student" ? true : false), () => { changeUpdate("currentride", true, false); });
+                            getCurrentRide(res[0]["currentride"], currentRide == undefined || currentRide == {} || currentRide.length == 0 ? false : (user.role == "Student" ? true : false), () => { changeUpdate("currentride", true, false); });
                         }
                         else setCurrentRide({});
 
