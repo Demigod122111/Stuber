@@ -76,7 +76,7 @@ export default function RideForm( {openDriverRating} ) {
                 if (canUpdate("currentride"))
                 {
                     sql`SELECT currentride FROM users WHERE id=${user.id}`.then(res => {
-                        if (res[0]["currentride"] != -1)
+                        if (res[0]["currentride"] != -1 && (currentRide == undefined || currentRide == {} || currentRide.length == 0 || !currentRide.studentemail))
                         {
                             getCurrentRide(res[0]["currentride"], () => { changeUpdate("currentride", true, false); });
                         }
@@ -233,7 +233,7 @@ export default function RideForm( {openDriverRating} ) {
         }
         else
         {
-            if (!currentRide)
+            if (currentRide == undefined || currentRide.length == 0 || currentRide.studentemail == undefined)
             {
                 return (<>
                     <div className="text-white p-6 rounded-lg shadow-lg max-w mx-auto flex justify-center">
@@ -426,7 +426,7 @@ export default function RideForm( {openDriverRating} ) {
         }
         else
         {
-            if (!currentRide)
+            if (currentRide == undefined || currentRide.length == 0 || currentRide.studentemail == undefined)
             {
                 return (<>
                     <div className="text-white p-6 rounded-lg shadow-lg max-w mx-auto flex justify-center">
