@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { GetUserData } from '../modules/misc';
 import { sql } from '../modules/database';
 import { AddHistory } from '../account/page';
-import { trackSynchronousRequestDataAccessInDev } from 'next/dist/server/app-render/dynamic-rendering';
 
 const parishOptions = [
     "Kingston",
@@ -97,6 +96,8 @@ export default function RideForm({ openDriverRating }) {
         sql`UPDATE rides SET status=${"cancelled"} WHERE id=${currentRide["id"]}`
         sql`UPDATE users SET currentride=${-1} WHERE email=${userData["email"]}`
         setUserData({ ...userData, "currentride": -1 });
+        setCurrentRide({});
+        setCanCreateRequest(true);
     }
 
     const resetForm = () => {
@@ -358,7 +359,10 @@ export default function RideForm({ openDriverRating }) {
                                 onClick={() => {
                                     sql`UPDATE rides SET status=${"completed"} WHERE id=${currentRide.id}`;
                                     openDriverRating(currentRide.driveremail);                      
-                                    sql`UPDATE users SET currentride=${-1} WHERE email=${userData["email"]} OR email=${currentRide.driveremail}`.then(() => setUserData({ ...userData, "currentride": -1 }));
+                                    sql`UPDATE users SET currentride=${-1} WHERE email=${userData["email"]} OR email=${currentRide.driveremail}`.then(() => {
+                                        setUserData({ ...userData, "currentride": -1 }); 
+                                        setCanCreateRequest(true); 
+                                    });
                                 }}
                             >
                                 Mark as Completed
