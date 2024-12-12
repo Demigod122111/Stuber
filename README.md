@@ -25,9 +25,6 @@ Stuber is a ride-sharing web application developed for the Caribbean Stem Olympi
 
 - [Vercel](https://vercel.com/): Ensures fast and reliable deployment of the application.
 
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ## Acknowledgments
 
