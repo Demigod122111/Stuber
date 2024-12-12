@@ -21,7 +21,7 @@ const parishOptions = [
     "St. Thomas",
 ];
 
-export default function RideForm( {openDriverRating} ) {
+export default function RideForm({ openDriverRating }) {
     const [pickup, setPickup] = useState({ street: '', parish: '' });
     const [dropoff, setDropoff] = useState({ street: '', parish: '' });
     const [routeSpecification, setRouteSpecification] = useState('');
@@ -80,7 +80,7 @@ export default function RideForm( {openDriverRating} ) {
                     sql`SELECT currentride FROM users WHERE id=${user.id}`.then(res => {
                         if (res[0]["currentride"] != -1 && (currentRide == undefined || currentRide == {} || currentRide.length == 0 || !currentRide.studentemail))
                         {
-                            getCurrentRide(res[0]["currentride"], currentRide == undefined || currentRide == {} || currentRide.length == 0 ? false : (user.role == "Student" ? true : false), () => { changeUpdate("currentride", true, false); });
+                            getCurrentRide(res[0]["currentride"], false, () => { changeUpdate("currentride", true, false); });
                         }
                         else setCurrentRide({});
 
@@ -106,6 +106,7 @@ export default function RideForm( {openDriverRating} ) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!canCreateRequest || (userData["currentride"] != undefined && userData["currentride"] != -1)) return;
+        changeUpdate("currentride", false, true);
         setCanCreateRequest(false);
         const res = await sql`INSERT INTO rides (studentemail, pickupstreet, pickupparish, dropoffstreet, dropoffparish, routespecs) VALUES (${userData["email"]}, ${pickup.street}, ${pickup.parish}, ${dropoff.street}, ${dropoff.parish}, ${routeSpecification}) RETURNING *`;
         setCurrentRide(res[0]);
@@ -113,7 +114,7 @@ export default function RideForm( {openDriverRating} ) {
         sql`UPDATE users SET currentride=${id} WHERE email=${userData["email"]}`
         setUserData({ ...userData, "currentride": id });
         setCurrentRide(undefined);
-        getCurrentRide(id);
+        getCurrentRide(id, false, () => changeUpdate("currentride", true, true));
         AddHistory(id);
 
         resetForm();
