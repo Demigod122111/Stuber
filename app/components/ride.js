@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { GetUserData } from '../modules/misc';
 import { sql } from '../modules/database';
 import { AddHistory } from '../account/page';
+import { trackSynchronousRequestDataAccessInDev } from 'next/dist/server/app-render/dynamic-rendering';
 
 const parishOptions = [
     "Kingston",
@@ -47,10 +48,11 @@ export default function RideForm( {openDriverRating} ) {
         return updates == undefined || updates == null || updates[key] == undefined || updates[key] == null || updates[key];
     }
     
-    const getCurrentRide = (id, then) => {
+    const getCurrentRide = (id, updateDriverOnly, then) => {
         if (id == -1) return;
         sql`SELECT r.*, u.name, d.name AS dname, d.phonenumber AS dphonenumber FROM rides r JOIN users u ON r.studentemail = u.email LEFT JOIN users d ON r.driveremail = d.email AND r.driveremail IS NOT NULL AND r.driveremail <> '' WHERE r.id=${id}`.then((res) => {
-            setCurrentRide(res[0]);
+            if (updateDriverOnly == true) setCurrentRide((prev) => { return { ...prev, "dname": res[0]["dname"], "dphonenumber": res[0]["dphonenumber"] }});
+            else setCurrentRide(res[0]);
             setCanCreateRequest(true);
 
             if (then) then();
@@ -78,7 +80,7 @@ export default function RideForm( {openDriverRating} ) {
                     sql`SELECT currentride FROM users WHERE id=${user.id}`.then(res => {
                         if (res[0]["currentride"] != -1 && (currentRide == undefined || currentRide == {} || currentRide.length == 0 || !currentRide.studentemail))
                         {
-                            getCurrentRide(res[0]["currentride"], () => { changeUpdate("currentride", true, false); });
+                            getCurrentRide(res[0]["currentride"], user.role == "Student" ? true : false, () => { changeUpdate("currentride", true, false); });
                         }
                         else setCurrentRide({});
 
