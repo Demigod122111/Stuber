@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { EnsureLogin, Logout } from "../auth/page";
 import Logo from "../assets/images/stuber_logo.png";
 import Image from 'next/image';
-import { GetUserData, UpdateUserData } from "../modules/misc";
+import { customFormatDateInUTC, GetUserData, toTitleCase, UpdateUserData } from "../modules/misc";
 import Link from "next/link";
 import { UploadImageM, UploadImageS } from "../components/fileupload";
 import { sql } from "../modules/database";
@@ -28,6 +28,18 @@ const savedSection = () => {
     return sec;
 }
 
+export const AddHistory = (rideID) =>
+{
+    GetUserData().then(user => {
+        const value = JSON.parse(user["history"].replace("[[", "[").replace("]]", "]"));
+        if (!value.includes(rideID))
+        {
+            value.push(rideID);
+            UpdateUserData("history", JSON.stringify(value));
+        }
+    })
+}
+
 export default function Account()
 {
     const [selectedSection, setSelectedSection] = useState('profile');
@@ -38,6 +50,9 @@ export default function Account()
     const [name, setName] = useState("");
     const [emailNotifications, setEmailNotifications] = useState(true);
     const [profilePic, setProfilePic] = useState("");
+    const [history, setHistory] = useState(undefined);
+
+    const [rides, setRides] = useState(undefined);
 
     const [viewing, setViewing] = useState("");
 
@@ -52,9 +67,11 @@ export default function Account()
 
     useEffect(() => {
         EnsureLogin();
-        GetUserData(setUserData, {"name": setName, "emailnotifications": setEmailNotifications, "profilepic": setProfilePic});
+        GetUserData(setUserData, {"name": setName, "emailnotifications": setEmailNotifications, "profilepic": setProfilePic, "history": setHistory });
         
         setSelectedSection(savedSection());
+
+        sql`SELECT r.*, u.name, d.name AS dname, d.phonenumber AS dphonenumber FROM rides r JOIN users u ON r.studentemail = u.email LEFT JOIN users d ON r.driveremail = d.email AND r.driveremail IS NOT NULL AND r.driveremail <> ''`.then(res => setRides(res));
     }, []);
 
     useEffect(() => {
@@ -120,6 +137,78 @@ export default function Account()
     const ensureValidSection = () => {
         if (!Object.keys(sections).includes(selectedSection))
             setSelectedSection("profile");
+    }
+
+
+    const GetHistory = () => {
+        if (history == undefined || rides == undefined)
+            return <p className="w-full text-center">Loading History...</p>;
+
+        const value = JSON.parse(history.replace("[[", "[").replace("]]", "]"));
+
+        if (value.length == 0)
+            return <p className="w-full text-center">Nothing to see here!</p>
+
+        const myHistory = rides.filter(ride => value.includes(ride.id));
+        return (
+        <div className="overflow-x-auto">
+            <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg shadow-lg">
+                <thead>
+                    <tr className="bg-gray-700 text-gray-300">
+                        <th
+                            className="px-6 py-3 text-center text-sm font-medium"
+                        >
+                            ID
+                        </th>
+
+                        <th
+                            className="px-6 py-3 text-center text-sm font-medium"
+                        >
+                            Student
+                        </th>
+
+                        <th
+                            className="px-6 py-3 text-center text-sm font-medium"
+                        >
+                            Driver
+                        </th>
+
+                        <th
+                            className="px-6 py-3 text-center text-sm font-medium"
+                        >
+                            Status
+                        </th>
+
+                        <th
+                            className="px-6 py-3 text-center text-sm font-medium"
+                        >
+                            Created At
+                        </th>
+
+                        <th
+                            className="px-6 py-3 text-center text-sm font-medium"
+                        >
+                            Accepted At
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        myHistory.map((ride, index) => <tr key={ride.id}
+                            className={`${
+                                index % 2 === 0 ? "bg-gray-800" : "bg-gray-700"
+                            } hover:bg-gray-600`}>
+                            <td className="px-6 py-4 text-sm text-center">{ride.id}</td>
+                            <td className="px-6 py-4 text-sm text-center">{ride.name}</td>
+                            <td className="px-6 py-4 text-sm text-center">{ride.dname ? ride.dname : "N/A"}</td>
+                            <td className="px-6 py-4 text-sm text-center">{toTitleCase(ride.status)}</td>
+                            <td className="px-6 py-4 text-sm text-center">{customFormatDateInUTC(ride.created_at)}</td>
+                            <td className="px-6 py-4 text-sm text-center">{ride.accepted_at ? customFormatDateInUTC(ride.accepted_at) : "N/A"}</td>
+                        </tr>)
+                    }
+                </tbody>
+            </table>
+        </div>)
     }
 
     const sections = {
@@ -336,7 +425,7 @@ export default function Account()
             content: (
                 <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w mx-auto">
                     <div className="space-y-4">
-                        <p>Coming soon...</p>
+                        {GetHistory()}
                     </div>
                 </div>
             ),

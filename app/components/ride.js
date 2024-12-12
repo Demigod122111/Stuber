@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GetUserData } from '../modules/misc';
 import { sql } from '../modules/database';
+import { AddHistory } from '../account/page';
 
 const parishOptions = [
     "Kingston",
@@ -102,7 +103,7 @@ export default function RideForm( {openDriverRating} ) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!canCreateRequest || (userData["currentride"] && userData["currentride"] != -1)) return;
+        if (!canCreateRequest || (userData["currentride"] != undefined && userData["currentride"] != -1)) return;
         setCanCreateRequest(false);
         const res = await sql`INSERT INTO rides (studentemail, pickupstreet, pickupparish, dropoffstreet, dropoffparish, routespecs) VALUES (${userData["email"]}, ${pickup.street}, ${pickup.parish}, ${dropoff.street}, ${dropoff.parish}, ${routeSpecification}) RETURNING *`;
         setCurrentRide(res[0]);
@@ -110,6 +111,7 @@ export default function RideForm( {openDriverRating} ) {
         sql`UPDATE users SET currentride=${id} WHERE email=${userData["email"]}`
         setUserData({ ...userData, "currentride": id });
         getCurrentRide(id);
+        AddHistory(id);
 
         resetForm();
     };
@@ -410,8 +412,10 @@ export default function RideForm( {openDriverRating} ) {
                         <button className="mt-auto px-4 py-2 border-t border-l border-r border-gray-700 text-white hover:rounded hover:bg-blue-600 transition" onClick={() => {
                             sql`UPDATE rides SET driveremail=${userData["email"]} WHERE id=${ride.id}`;
                             sql`UPDATE rides SET status=${"in progress"} WHERE id=${ride.id}`;
+                            sql`UPDATE rides SET accepted_at=CURRENT_TIMESTAMP WHERE id=${ride.id}`;
                             sql`UPDATE users SET currentride=${ride.id} WHERE email=${userData["email"]}`.then(() => setUserData({ ...userData, "currentride": ride.id }));
                             setCurrentRide(ride);
+                            AddHistory(ride.id);
                         }}>
                             Accept Ride Request
                         </button>

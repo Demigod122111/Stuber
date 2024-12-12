@@ -87,10 +87,12 @@ const AdminDashboard = () => {
 
         {/* Content */}
         <div className="p-6 flex flex-wrap gap-4 h-screen w-full">
-          <StatsCard title="Total Users" value={totalUsers} />
-          <StatsCard title="Total Drivers" value={totalDrivers} />
-          <StatsCard title="Completed Rides" value={completedRides} />
-          <StatsCard title="Pending Requests" value={pendingRequests} />
+          <div className="flex flex-wrap w-full justify-center gap-4">
+            <StatsCard title="Total Users" value={totalUsers} />
+            <StatsCard title="Total Drivers" value={totalDrivers} />
+            <StatsCard title="Completed Rides" value={completedRides} />
+            <StatsCard title="Pending Requests" value={pendingRequests} />
+          </div>
 
           {/* Additional Sections */}
           <RecentActivities />

@@ -100,3 +100,18 @@ export function customFormatDateInUTC(date) {
 
     return `${months[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()} ${hours}:${minutes} ${ampm} UTC`;
 }
+
+export function toSentenceCase(str) {
+    if (!str) return ''; // Handle empty or null strings
+    // Trim spaces, convert the first character to uppercase and the rest to lowercase
+    return str.trim().charAt(0).toUpperCase() + str.trim().slice(1).toLowerCase();
+}
+
+export function toTitleCase(str) {
+    if (!str) return ''; // Handle empty or null strings
+    return str
+        .trim()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+}
