@@ -33,6 +33,7 @@ export default function RideForm({ openDriverRating }) {
     const [role, setRole] = useState('');
 
     const [canCreateRequest, setCanCreateRequest] = useState(true);
+    const [canMarkAsCompleted, setCanMarkAsCompleted] = useState(true);
 
     const [updates, setUpdates] = useState({})
 
@@ -354,15 +355,17 @@ export default function RideForm({ openDriverRating }) {
                             >
                                 Cancel
                             </button>
-                            : <button
+                            : canMarkAsCompleted && <button
                                 type="button"
                                 className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 onClick={() => {
+                                    setCanMarkAsCompleted(false);
                                     sql`UPDATE rides SET status=${"completed"} WHERE id=${currentRide.id}`;
                                     openDriverRating(currentRide.driveremail);                      
                                     sql`UPDATE users SET currentride=${-1} WHERE email=${userData["email"]} OR email=${currentRide.driveremail}`.then(() => {
                                         setUserData({ ...userData, "currentride": -1 }); 
                                         setCanCreateRequest(true); 
+                                        setCanCreateRequest(true);
                                     });
                                 }}
                             >
