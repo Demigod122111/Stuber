@@ -27,7 +27,7 @@ export default function RideForm( {openDriverRating} ) {
 
     const [currentRide, setCurrentRide] = useState({});
 
-    const [rides, setRides] = useState([]);
+    const [rides, setRides] = useState(undefined);
 
     const [userData, setUserData] = useState({});
     const [role, setRole] = useState('');
@@ -110,6 +110,7 @@ export default function RideForm( {openDriverRating} ) {
         const id = res[0]["id"];
         sql`UPDATE users SET currentride=${id} WHERE email=${userData["email"]}`
         setUserData({ ...userData, "currentride": id });
+        setCurrentRide(undefined);
         getCurrentRide(id);
         AddHistory(id);
 
@@ -365,6 +366,14 @@ export default function RideForm( {openDriverRating} ) {
     {
         if (!userData["currentride"] || userData["currentride"] == -1)
         {
+            if (rides == undefined)
+            {
+                return (
+                <div className="border-t border-gray-700 shadow-md rounded-lg px-4 py-2 flex flex-col gap-4">
+                <h2 className="text-lg font-semibold w-full overflow-auto text-blue-500 text-center border-l border-r border-b border-gray-700">Loading Ride Requests...</h2>
+                </div>);
+            }
+
             if (rides.length == 0)
             {
                 return (
