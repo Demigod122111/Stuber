@@ -14,6 +14,9 @@ importers:
       '@googlemaps/js-api-loader':
         specifier: ^1.16.8
         version: 1.16.8
+      '@heroicons/react':
+        specifier: ^2.2.0
+        version: 2.2.0(react@19.0.0)
       '@mapbox/mapbox-sdk':
         specifier: ^0.16.1
         version: 0.16.1
@@ -330,6 +333,11 @@ packages:
 
   '@googlemaps/url-signature@1.0.39':
     resolution: {integrity: sha512-OMI/Y7850t3nIWfeNWWH08empXIJZw41siy6OhNWsyklO1TNKKN60x5y6TqLXQKBLiMlyC1ekzW8L7B+K2Uagg==}
+
+  '@heroicons/react@2.2.0':
+    resolution: {integrity: sha512-LMcepvRaS9LYHJGsF0zzmgKCUim/X3N/DQKc4jepAXJ7l8QxJ1PmxJzqplF2Z3FE4PqBAIGyJAQ/w4B5dsqbtQ==}
+    peerDependencies:
+      react: '>= 16 || ^19.0.0-rc'
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -3363,6 +3371,10 @@ snapshots:
   '@googlemaps/url-signature@1.0.39':
     dependencies:
       crypto-js: 4.2.0
+
+  '@heroicons/react@2.2.0(react@19.0.0)':
+    dependencies:
+      react: 19.0.0
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:

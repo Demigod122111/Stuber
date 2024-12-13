@@ -9,6 +9,8 @@ import { EnsureLogin } from '../auth/page';
 import { GetUserData } from '../modules/misc';
 import "../styles/styles.css";
 import { redirect } from 'next/navigation';
+import Chatbox from './ChatBox';
+import { sql } from '../modules/database';
 
 export default function NavBar() {
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,15 +18,36 @@ export default function NavBar() {
     const [userData, setUserData] = useState({});
 
     useEffect(() => {
-        setInterval(() => {
+        const interval1 = setInterval(() => {
             EnsureLogin();
         }, 60000);
 
-        GetUserData(setUserData);
+        var interval2;
+
+        GetUserData(setUserData).then((user) => {
+            interval2 = setInterval(() => {
+                if (user.id)
+                sql`SELECT currentride FROM users WHERE id=${user.id}`.then(res => {
+                    
+                    setUserData({ ...userData, "currentride": res[0].currentride })
+                })
+            }, 10000)
+        });
+
+        return () => {
+            clearInterval(interval1);
+            clearInterval(interval2);
+        }
     }, []);
 
     const CanShowLink = (link) => {
         return link.show == undefined || link.show();
+    }
+
+    const Chat = () => {
+        if (userData["currentride"] && userData["currentride"] != -1)
+            return <Chatbox rideID={userData["currentride"]} />
+        else return <></>
     }
 
     const navLinks = [
@@ -33,7 +56,7 @@ export default function NavBar() {
         { href: "/account", label: "Account" },
     ];
 
-    return (
+    return (<>
         <nav className="bg-gray-900 text-white shadow-lg">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
@@ -116,6 +139,8 @@ export default function NavBar() {
                 </div>
             )}
         </nav>
-    );
+
+        {Chat()}
+    </>);
     
 }

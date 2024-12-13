@@ -10,6 +10,7 @@ import { UploadImageM, UploadImageS } from "../components/fileupload";
 import { sql } from "../modules/database";
 import { decryptPassword, encryptPassword } from "../modules/security";
 import { FullScreenImageViewer } from "../admin/identity-reviews/page";
+import Chatbox from "../components/ChatBox";
 
 export const IsVerified = async () => {
     var vstatus = "";
@@ -617,7 +618,7 @@ export default function Account()
                     <Link href="/home">Home</Link>
                 </li>
             {Object.keys(sections).map((sectionKey) => (
-                CanShowSection(sections[sectionKey]) ?
+                CanShowSection(sections[sectionKey]) &&
                 <li
                 key={sectionKey}
                 className={`cursor-pointer p-3 rounded-lg transition text-center lg:text-left ${
@@ -629,7 +630,6 @@ export default function Account()
                 >
                 {sections[sectionKey].title}
                 </li>
-                : <></>
             ))}
             </ul>
 

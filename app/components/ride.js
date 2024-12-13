@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { GetUserData } from '../modules/misc';
 import { sql } from '../modules/database';
 import { AddHistory } from '../account/page';
+import { CreateChat } from './ChatBox';
 
 const parishOptions = [
     "Kingston",
@@ -96,9 +97,6 @@ export default function RideForm({ openDriverRating }) {
     const cancelRide = () => {
         sql`UPDATE rides SET status=${"cancelled"} WHERE id=${currentRide["id"]}`
         sql`UPDATE users SET currentride=${-1} WHERE email=${userData["email"]}`
-        setUserData({ ...userData, "currentride": -1 });
-        setCurrentRide({});
-        changeUpdate("currentride", false, true);
         setCanCreateRequest(true);
     }
 
@@ -114,13 +112,12 @@ export default function RideForm({ openDriverRating }) {
         changeUpdate("currentride", false, true);
         setCanCreateRequest(false);
         const res = await sql`INSERT INTO rides (studentemail, pickupstreet, pickupparish, dropoffstreet, dropoffparish, routespecs) VALUES (${userData["email"]}, ${pickup.street}, ${pickup.parish}, ${dropoff.street}, ${dropoff.parish}, ${routeSpecification}) RETURNING *`;
-        setCurrentRide(res[0]);
         const id = res[0]["id"];
-        sql`UPDATE users SET currentride=${id} WHERE email=${userData["email"]}`
-        setUserData({ ...userData, "currentride": id });
-        setCurrentRide(undefined);
-        getCurrentRide(id, false, () => changeUpdate("currentride", true, true));
+        sql`UPDATE users SET currentride=${id} WHERE email=${userData["email"]}`.then(() => {
+            getCurrentRide(id, false, () => changeUpdate("currentride", true, true));
+        })
         AddHistory(id);
+        CreateChat(id);
 
         resetForm();
     };
