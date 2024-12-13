@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { sql } from "../modules/database";
-import { GetUserData, toTitleCase } from "../modules/misc";
+import { getHostDomain, GetUserData, toTitleCase } from "../modules/misc";
 import { sendEmail } from "../modules/email";
 
 export function CreateChat(rideID)
