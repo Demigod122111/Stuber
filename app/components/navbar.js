@@ -17,6 +17,8 @@ export default function NavBar() {
 
     const [userData, setUserData] = useState({});
 
+    var currentride = -1;
+
     useEffect(() => {
         const interval1 = setInterval(() => {
             EnsureLogin();
@@ -29,7 +31,7 @@ export default function NavBar() {
                 if (user.id)
                 sql`SELECT currentride FROM users WHERE id=${user.id}`.then(res => {
                     
-                    setUserData({ ...userData, "currentride": res[0].currentride })
+                    currentride = res[0].currentride;
                 })
             }, 10000)
         });
@@ -45,8 +47,8 @@ export default function NavBar() {
     }
 
     const Chat = () => {
-        if (userData["currentride"] && userData["currentride"] != -1)
-            return <Chatbox rideID={userData["currentride"]} />
+        if (currentride && currentride != -1)
+            return <Chatbox rideID={currentride} />
         else return <></>
     }
 
