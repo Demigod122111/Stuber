@@ -224,7 +224,7 @@ export default function Chatbox({ rideID }) {
                   
                         {/* Display Message */}
                         <p
-                          className={`text-sm min-w-24 ${
+                          className={`text-sm min-w-24 text-white ${
                             message.userID == userData.id ? "text-right" : "text-left"
                           }`}
                         >
