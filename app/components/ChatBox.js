@@ -289,7 +289,7 @@ export default function Chatbox({ rideID }) {
                             ${msg}
                           </div>
                           <p style="font-size: 14px; margin-top: 20px; color: #555;">
-                            Log in to view more details.
+                            <a href="${(getHostDomain(typeof window !== "undefined" ? window.location.href : ""))}/auth">Log in</a> to view more details.
                           </p>
                           <footer style="margin-top: 20px; text-align: center; font-size: 12px; color: #aaa;">
                             &copy; ${new Date().getFullYear()} Stuber. All rights reserved.
