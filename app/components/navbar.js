@@ -16,8 +16,7 @@ export default function NavBar() {
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const [userData, setUserData] = useState({});
-
-    var currentride = -1;
+    const [currentRide, setCurrentRide] = useState();
 
     useEffect(() => {
         const interval1 = setInterval(() => {
@@ -31,7 +30,7 @@ export default function NavBar() {
                 if (user.id)
                 sql`SELECT currentride FROM users WHERE id=${user.id}`.then(res => {
                     
-                    currentride = res[0].currentride;
+                    setCurrentRide(res[0].currentride);
                 })
             }, 10000)
         });
@@ -47,8 +46,8 @@ export default function NavBar() {
     }
 
     const Chat = () => {
-        if (currentride && currentride != -1)
-            return <Chatbox rideID={currentride} />
+        if (currentRide && currentRide != -1)
+            return <Chatbox rideID={currentRide} />
         else return <></>
     }
 
