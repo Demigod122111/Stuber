@@ -132,6 +132,12 @@ export default function Chatbox({ rideID }) {
         </button>      
       )}
 
+      {/* Shield */}
+      {
+        window.innerWidth < 768 && isOpen && 
+        <div className="fixed z-39 w-screen h-screen top-0 left-0"></div>
+      }
+
       {/* Chatbox */}
       {isOpen && (
         <div
